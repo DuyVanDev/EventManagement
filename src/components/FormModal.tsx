@@ -4,11 +4,6 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
 
-// USE LAZY LOADING
-
-// import TeacherForm from "./forms/TeacherForm";
-// import StudentForm from "./forms/StudentForm";
-
 const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
   loading: () => <h1>Loading...</h1>,
 });
@@ -26,13 +21,28 @@ const EventForm = dynamic(() => import("./forms/EventForm"), {
 });
 
 const forms: {
-  [key: string]: (type: "create" | "update", data?: any) => JSX.Element;
+  [key: string]: (
+    type: "create" | "update",
+    data: any,
+    setOpen: (open: boolean) => void,
+    onActionComplete?: () => void
+  ) => JSX.Element;
 } = {
-  teacher: (type, data) => <TeacherForm type={type} data={data} />,
-  student: (type, data) => <StudentForm type={type} data={data} />,
-  event: (type, data) => <EventForm type={type} data={data} />,
-  faculty: (type, data) => <FacultyForm type={type} data={data} />,
-  location: (type, data) => <LocationForm type={type} data={data} />
+  teacher: (type, data, setOpen, onActionComplete) => (
+    <TeacherForm type={type} data={data} setOpen={setOpen} onActionComplete={onActionComplete} />
+  ),
+  student: (type, data, setOpen, onActionComplete) => (
+    <StudentForm type={type} data={data} setOpen={setOpen} onActionComplete={onActionComplete} />
+  ),
+  event: (type, data, setOpen, onActionComplete) => (
+    <EventForm type={type} data={data} setOpen={setOpen} onActionComplete={onActionComplete} />
+  ),
+  faculty: (type, data, setOpen, onActionComplete) => (
+    <FacultyForm type={type} data={data} setOpen={setOpen} onActionComplete={onActionComplete} />
+  ),
+  location: (type, data, setOpen, onActionComplete) => (
+    <LocationForm type={type} data={data} setOpen={setOpen} onActionComplete={onActionComplete} />
+  ),
 };
 
 const FormModal = ({
@@ -40,46 +50,39 @@ const FormModal = ({
   type,
   data,
   id,
+  onActionComplete,
 }: {
-  table:
-    | "teacher"
-    | "student"
-    | "location"
-    | "faculty"
-    | "class"
-    | "lesson"
-    | "exam"
-    | "assignment"
-    | "result"
-    | "attendance"
-    | "event"
-    | "announcement";
+  table: "teacher" | "student" | "location" | "faculty" | "event";
   type: "create" | "update" | "delete";
   data?: any;
   id?: number;
+  onActionComplete?: () => void;
 }) => {
-  const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
-  const bgColor =
-    type === "create"
-      ? "bg-lamaYellow"
-      : type === "update"
-      ? "bg-lamaSky"
-      : "bg-lamaPurple";
-
   const [open, setOpen] = useState(false);
 
   const Form = () => {
     return type === "delete" && id ? (
-      <form action="" className="p-4 flex flex-col gap-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          // Call delete action here and handle completion
+          if (onActionComplete) onActionComplete();
+          setOpen(false);
+        }}
+        className="p-4 flex flex-col gap-4"
+      >
         <span className="text-center font-medium">
           All data will be lost. Are you sure you want to delete this {table}?
         </span>
-        <button className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">
+        <button
+          type="submit"
+          className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center"
+        >
           Delete
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
-      forms[table](type, data)
+      forms[table](type, data, setOpen, onActionComplete)
     ) : (
       "Form not found!"
     );
@@ -88,7 +91,9 @@ const FormModal = ({
   return (
     <>
       <button
-        className={`${size} flex items-center justify-center rounded-full ${bgColor}`}
+        className={`w-8 h-8 flex items-center justify-center rounded-full ${
+          type === "create" ? "bg-lamaYellow" : type === "update" ? "bg-lamaSky" : "bg-lamaPurple"
+        }`}
         onClick={() => setOpen(true)}
       >
         <Image src={`/${type}.png`} alt="" width={16} height={16} />
@@ -101,7 +106,7 @@ const FormModal = ({
               className="absolute top-4 right-4 cursor-pointer"
               onClick={() => setOpen(false)}
             >
-              <Image src="/close.png" alt="" width={14} height={14} />
+              <Image src="/close.png" alt="Close" width={14} height={14} />
             </div>
           </div>
         </div>

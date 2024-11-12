@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import axios from "axios";
 import Image from "next/image";
+import { Alerterror, Alertwarning } from "./Notifications";
 
 interface ImgMutilUploadProps {
   data?: string;
@@ -75,7 +76,7 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
         }
         onImageUpload(files); // Gọi callback để lưu file
       } else {
-        alert(
+        Alertwarning(
           'File không đúng định dạng! Vui lòng chọn lại file có định dạng "jpg", "jpeg", "png", "gif"'
         );
       }
@@ -105,10 +106,9 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
         onData(i.join(",")); // Trả về URL các ảnh đã upload
       }
 
-      alert("Upload ảnh thành công!");
     } catch (error) {
       console.error("Lỗi khi upload ảnh:", error);
-      alert("Upload ảnh thất bại!");
+      Alerterror("Upload ảnh thất bại!");
     }
   };
 

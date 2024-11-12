@@ -109,4 +109,5 @@ export const FormatDateJsonPro = (date : any, type = 0) => {
   }
   if (type === 21) return moment(date).format("YYYY-MM-DD HH:mm:ss");
   if (type === 22) return moment(date).format("YYYY-MM-DD");
+  if (type === 23) return moment(date).format("YYYY-MM-DD HH:mm");
 };

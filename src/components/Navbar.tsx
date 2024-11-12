@@ -6,7 +6,6 @@ import { useState } from "react";
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, logout } = useAuth();
-  console.log(user);
 
   // Hàm toggle trạng thái của dropdown
   const toggleDropdown = () => {

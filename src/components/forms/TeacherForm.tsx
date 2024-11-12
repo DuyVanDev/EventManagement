@@ -57,7 +57,6 @@ const TeacherForm = ({
       Email: data.Email,
     },
   });
-  console.log(data);
 
   const [uploadedImages, setUploadedImages] = useState([]);
   const [imageData, setImageData] = useState(data?.Avatar); // Dữ liệu ảnh dạng string từ server hoặc xử lý khác
@@ -86,8 +85,6 @@ const TeacherForm = ({
   }, [data, setValue]);
 
   const onSubmit = handleSubmit(async (dataform) => {
-    debugger;
-    console.log(dataform)
     try {
       let _newListImage = "";
       if (uploadedImages.length > 0 && Array.isArray(uploadedImages)) {

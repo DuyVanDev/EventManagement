@@ -1,3 +1,4 @@
+"use client";
 import { fetchLocaitonList } from "@/app/action/location";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
@@ -5,6 +6,8 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { role, subjectsData } from "@/lib/data";
 import Image from "next/image";
+import useSWR from "swr";
+
 
 type Subject = {
   LocationId: number;
@@ -12,6 +15,8 @@ type Subject = {
   Address: string;
   Capacity: number;
 };
+
+const fetcher = (params: object) => fetchLocaitonList(params);
 
 const columns = [
   {
@@ -32,9 +37,8 @@ const columns = [
   },
 ];
 
-const LocationListPage = async () => {
-  const ListData = await fetchLocaitonList({});
-  console.log(ListData);
+const LocationListPage =  () => {
+  const { data: ListData, mutate } = useSWR({}, fetcher);
   const renderRow = (item: Subject) => (
     <tr
       key={item.LocationId}
@@ -47,8 +51,8 @@ const LocationListPage = async () => {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="location" type="update" data={item} />
-              <FormModal table="location" type="delete" id={item.LocationId} />
+              <FormModal table="location" type="update" data={item} onActionComplete={() => mutate()} />
+              <FormModal table="location" type="delete" id={item.LocationId} onActionComplete={() => mutate()}/>
             </>
           )}
         </div>
@@ -82,6 +86,7 @@ const LocationListPage = async () => {
                   Address: "",
                   Capacity: 0,
                 }}
+                onActionComplete={() => mutate()}
               />
             )}
           </div>

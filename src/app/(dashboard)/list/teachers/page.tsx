@@ -1,3 +1,4 @@
+"use client"
 import { fetchTeacher } from "@/app/action/user";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
@@ -6,6 +7,8 @@ import TableSearch from "@/components/TableSearch";
 import { role, teachersData } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import useSWR from "swr";
 
 type Teacher = {
   UserId: number;
@@ -16,6 +19,8 @@ type Teacher = {
   FacultyName: string;
   Address: string;
 };
+
+const fetcher = (params: object) => fetchTeacher(params);
 
 const columns = [
   {
@@ -48,9 +53,15 @@ const columns = [
   },
 ];
 
-const TeacherListPage = async () => {
-  const teacherList = await fetchTeacher({ Id: 0 });
-  console.log(teacherList);
+const TeacherListPage = () => {
+  const { data: ListData, mutate } = useSWR({ Id: 0 }, fetcher);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Set number of items per page
+  const totalPages = Math.ceil(ListData?.length / itemsPerPage);
+
+  // Get the data for the current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentData = ListData?.slice(startIndex, startIndex + itemsPerPage);
   const renderRow = (item: Teacher) => (
     <tr
       key={item.UserId}
@@ -131,9 +142,13 @@ const TeacherListPage = async () => {
       </div>
       {/* LIST */}
       {/* <Table columns={columns} renderRow={renderRow} data={teachersData} /> */}
-      <Table columns={columns} renderRow={renderRow} data={teacherList} />
+      <Table columns={columns} renderRow={renderRow} data={currentData} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

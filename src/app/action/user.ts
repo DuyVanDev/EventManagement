@@ -24,6 +24,19 @@ export const fetchTeacher = async (data: FetchTeacher) => {
   } catch (error) {}
 };
 
+
+interface FetchStudent {
+  Id?: any;
+  Specialty?: number; // Khoa của giảng viên
+}
+
+export const EV_spStudent_List = async (data: FetchStudent) => {
+  try {
+    return await fetchMethod(data, "EV_spStudent_List");
+  } catch (error) {}
+};
+
+
 interface UserLogin {
   Username?: string;
   Password?: string; // Khoa của giảng viên

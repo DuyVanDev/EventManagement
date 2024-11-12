@@ -16,7 +16,7 @@ const SingleTeacherPage = async ({
 
   const { id } = params;
   const teacher = await fetchTeacher({Id : id})
-  console.log(teacher)
+  console.log(id)
   return (
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
       {/* LEFT */}
@@ -128,7 +128,7 @@ const SingleTeacherPage = async ({
         </div>
         {/* BOTTOM */}
         <div className="mt-4 bg-white rounded-md p-4 h-[800px]">
-          <h1>Teacher&apos;s Schedule</h1>
+          <h1>Sự kiện của tôi</h1>
           <BigCalendar teacherId={id}/>
         </div>
       </div>
@@ -155,7 +155,7 @@ const SingleTeacherPage = async ({
           </div>
         </div>
         <Performance />
-        <Announcements />
+        {/* <Announcements /> */}
       </div>
     </div>
   );

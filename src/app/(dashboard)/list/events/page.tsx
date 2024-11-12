@@ -1,3 +1,5 @@
+"use client";
+
 import { fetchEventList } from "@/app/action/event";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
@@ -6,6 +8,8 @@ import TableSearch from "@/components/TableSearch";
 import { eventsData, role } from "@/lib/data";
 import { FormatDateJsonPro } from "@/utils/FormatDateJson";
 import Image from "next/image";
+import { useState } from "react";
+import useSWR from "swr";
 
 type Event = {
   EventId: number;
@@ -13,8 +17,11 @@ type Event = {
   EventTypeName: string;
   StartTime: string;
   EndTime: string;
-  LocationName : string
+  LocationName: string;
 };
+
+// Fetch function for SWR
+const fetcher = (params: object) => fetchEventList(params);
 
 const columns = [
   {
@@ -46,9 +53,17 @@ const columns = [
   },
 ];
 
-const EventListPage = async () => {
-  const EventList = await fetchEventList({EventId : '0'})
-  console.log(EventList)
+const EventListPage = () => {
+  const { data: EventList, mutate } = useSWR({ EventId: "0" }, fetcher);
+  console.log(EventList);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Set number of items per page
+  const totalPages = Math.ceil(EventList?.length / itemsPerPage);
+
+  // Get the data for the current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentData = EventList?.slice(startIndex, startIndex + itemsPerPage);
+  console.log(EventList);
 
   const renderRow = (item: Event) => (
     <tr
@@ -58,14 +73,28 @@ const EventListPage = async () => {
       <td className="flex items-center gap-4 p-4">{item.EventName}</td>
       <td>{item.EventTypeName}</td>
       <td>{item.LocationName}</td>
-      <td className="hidden md:table-cell">{FormatDateJsonPro(item.EndTime,5)}</td>
-      <td className="hidden md:table-cell">{FormatDateJsonPro(item.EndTime,5)}</td>
+      <td className="hidden md:table-cell">
+        {FormatDateJsonPro(item.EndTime, 5)}
+      </td>
+      <td className="hidden md:table-cell">
+        {FormatDateJsonPro(item.EndTime, 5)}
+      </td>
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="event" type="update" data={item} />
-              <FormModal table="event" type="delete" id={item.EventId} />
+              <FormModal
+                table="event"
+                type="update"
+                data={item}
+                onActionComplete={() => mutate()}
+              />
+              <FormModal
+                table="event"
+                type="delete"
+                id={item.EventId}
+                onActionComplete={() => mutate()}
+              />
             </>
           )}
         </div>
@@ -101,16 +130,23 @@ const EventListPage = async () => {
                   LectureId: "",
                   EventTypeId: 0,
                   ParticipantLimit: 0,
+                  Thumnail: "",
+                  ListImage:null,
                 }}
+                onActionComplete={() => mutate()}
               />
             )}
           </div>
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={EventList} />
+      <Table columns={columns} renderRow={renderRow} data={currentData} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

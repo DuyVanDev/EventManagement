@@ -1,4 +1,3 @@
-"use client";
 import { fetchLectureSelect } from "@/app/action/user";
 import React, { useEffect, useState, useCallback } from "react";
 import Select, { SingleValue, MultiValue, ActionMeta } from "react-select";
@@ -11,7 +10,7 @@ interface DistrictOption {
 interface SelectLectureProps {
   Disabled?: boolean;
   onSelected?: (item: string) => void; // Will return string of values separated by semicolons
-  onActive?: number;
+  onActive?: string; // Change type to string to accept comma-separated values
   Id?: any;
   multiple?: boolean;
   label?: string;
@@ -23,7 +22,7 @@ const SelectLectureComp = React.forwardRef<HTMLDivElement, SelectLectureProps>(
     {
       Disabled = false,
       onSelected = () => {},
-      onActive = 0,
+      onActive = "",
       Id = 0,
       multiple = false,
       label = "Tiêu đề",
@@ -32,9 +31,9 @@ const SelectLectureComp = React.forwardRef<HTMLDivElement, SelectLectureProps>(
     ref
   ) => {
     const [data, setData] = useState<DistrictOption[]>([]);
-    const [valueS, setValueS] = useState<
-      SingleValue<DistrictOption> | MultiValue<DistrictOption>
-    >(multiple ? [] : null);
+    const [valueS, setValueS] = useState<SingleValue<DistrictOption> | MultiValue<DistrictOption>>(
+      multiple ? [] : null
+    );
     const [defaultOption] = useState<DistrictOption>({
       value: 0,
       label: "Chọn giảng viên",
@@ -46,21 +45,18 @@ const SelectLectureComp = React.forwardRef<HTMLDivElement, SelectLectureProps>(
         _actionMeta: ActionMeta<DistrictOption>
       ) => {
         if (multiple && Array.isArray(item)) {
-          // Lọc ra các item không có value là 0
           const filteredValues = item.filter((i) => i.value !== 0);
-          // Tạo chuỗi các giá trị được phân tách bằng dấu ;
           const selectedValuesString = filteredValues.map((i) => i.value).join(";");
-          setValueS(filteredValues); // Cập nhật state với các giá trị đã lọc
-          onSelected(selectedValuesString); // Trả về chuỗi các giá trị
+          setValueS(filteredValues);
+          onSelected(selectedValuesString);
         } else {
           const selectedItem = item as SingleValue<DistrictOption>;
-          // Nếu chọn một item và giá trị là 0, reset
           if (selectedItem?.value === 0) {
             setValueS(null);
-            onSelected(""); // Reset giá trị ra ngoài nếu giá trị là 0
+            onSelected("");
           } else {
-            setValueS(selectedItem); // Cập nhật giá trị đã chọn
-            onSelected(selectedItem?.value.toString() || ""); // Trả về giá trị đã chọn
+            setValueS(selectedItem);
+            onSelected(selectedItem?.value.toString() || "");
           }
         }
       },
@@ -75,12 +71,17 @@ const SelectLectureComp = React.forwardRef<HTMLDivElement, SelectLectureProps>(
           label: lecture.FullName,
         }));
 
-        // Add the default option with value 0
         setData([defaultOption, ...dataOptions]);
 
         // Set default value on active or use defaultOption
-        if (onActive !== 0) {
-          const dataActive = dataOptions.find((a) => a.value === onActive) || null;
+        if (onActive && multiple) {
+          const activeValues = onActive.split(",").map(Number);
+          const dataActive = dataOptions.filter((option) =>
+            activeValues.includes(option.value)
+          );
+          setValueS(dataActive);
+        } else if (onActive) {
+          const dataActive = dataOptions.find((a) => a.value === Number(onActive)) || null;
           setValueS(dataActive);
         } else {
           setValueS(defaultOption);
@@ -95,33 +96,37 @@ const SelectLectureComp = React.forwardRef<HTMLDivElement, SelectLectureProps>(
     }, [Id]);
 
     useEffect(() => {
-      if (onActive !== 0) {
-        const _dataActive = data.find((p) => p.value === onActive) || null;
+      if (onActive && multiple) {
+        const activeValues = onActive.split(";").map(Number);
+        const _dataActive = data.filter((p) => activeValues.includes(p.value));
+        setValueS(_dataActive);
+      } else if (onActive) {
+        const _dataActive = data.find((p) => p.value === Number(onActive)) || null;
         setValueS(_dataActive);
       } else {
         setValueS(defaultOption);
       }
-    }, [onActive, data, defaultOption]);
+    }, [onActive, data, defaultOption, multiple]);
 
     return (
       <div className="w-full">
-      <div className="relative">
-        <label className=" text-xs text-gray-500">
-          {label}
-          {isRequired && <span className="text-red-500 ml-1">(*)</span>}
-        </label>
+        <div className="relative">
+          <label className=" text-xs text-gray-500">
+            {label}
+            {isRequired && <span className="text-red-500 ml-1">(*)</span>}
+          </label>
 
-        <Select
-          isDisabled={Disabled}
-          value={valueS}
-          isMulti={multiple}
-          onChange={onSelecteItem}
-          className="text-sm"
-          options={data}
-          ref={ref}
-        />
+          <Select
+            isDisabled={Disabled}
+            value={valueS}
+            isMulti={multiple}
+            onChange={onSelecteItem}
+            className="text-sm"
+            options={data}
+            ref={ref}
+          />
+        </div>
       </div>
-    </div>
     );
   }
 );

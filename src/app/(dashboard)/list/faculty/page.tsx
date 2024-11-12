@@ -1,3 +1,4 @@
+"use client"
 import { fetchFacultyList } from "@/app/action/faculty";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
@@ -5,7 +6,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { role, subjectsData } from "@/lib/data";
 import Image from "next/image";
-
+import useSWR from "swr";
 type Subject = {
   FacultyId: number;
   FacultyName: string;
@@ -22,8 +23,11 @@ const columns = [
   },
 ];
 
-const FacultyListPage = async () => {
-  const ListData = await fetchFacultyList({ FacultyId: '0' });
+
+const fetcher = (params: object) => fetchFacultyList(params);
+
+const FacultyListPage = () => {
+  const { data: ListData, mutate } = useSWR({ FacultyId: '0' }, fetcher);
   console.log(ListData);
   const renderRow = (item: Subject) => (
     <tr
@@ -35,8 +39,8 @@ const FacultyListPage = async () => {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="faculty" type="update" data={item} />
-              <FormModal table="faculty" type="delete" id={item.FacultyId} />
+              <FormModal table="faculty" type="update" data={item} onActionComplete={() => mutate()}/>
+              <FormModal table="faculty" type="delete" id={item.FacultyId} onActionComplete={() => mutate()}/>
             </>
           )}
         </div>
@@ -68,6 +72,7 @@ const FacultyListPage = async () => {
                   FacultyId: 0,
                   FacultyName: "",
                 }}
+                onActionComplete={() => mutate()}
               />
             )}
           </div>

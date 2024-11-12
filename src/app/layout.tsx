@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
-import { ClerkProvider } from "@clerk/nextjs";
 import { AuthProvider } from "@/context/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Lama Dev School Management Dashboard",
+  title: "Event TDMU",
   description: "Next.js School Management System",
 };
 
@@ -19,7 +18,6 @@ export default function RootLayout({
 }>) {
   return (
     <AuthProvider>
-      <ClerkProvider>
         <html lang="en">
           {/* Same as */}
           <body className={inter.className}>
@@ -39,7 +37,6 @@ export default function RootLayout({
             <ToastContainer />
           </body>
         </html>
-      </ClerkProvider>
     </AuthProvider>
   );
 }

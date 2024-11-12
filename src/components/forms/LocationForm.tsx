@@ -18,8 +18,7 @@ const schema = z.object({
     .string()
     .min(1, { message: "Vui lòng nhập địa chỉ" }),
     Capacity: z
-    .number()
-    .min(1, { message: "Nhập giá trị lớn hơn 0" }),
+    .any(),
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -27,6 +26,8 @@ type Inputs = z.infer<typeof schema>;
 const LocationForm = ({
   type,
   data,
+  setOpen,
+  onActionComplete,
 }: {
   type: "create" | "update";
   data?: any;
@@ -42,6 +43,8 @@ const LocationForm = ({
     defaultValues: {
       LocationId: data.LocationId,
       LocationName: data.LocationName,
+      Address: data.Address,
+      Capacity: data.Capacity,
     },
   });
 
@@ -50,7 +53,7 @@ const LocationForm = ({
       setValue("LocationId", data.LocationId);
       setValue("LocationName", data.LocationName);
       setValue("Address", data.Address);
-      setValue("Capacity", data.Capacity);
+      setValue("Capacity",parseInt(data.Capacity));
     }
   }, [data, setValue]);
   const onSubmit = handleSubmit(async (dataform) => {
@@ -64,6 +67,8 @@ const LocationForm = ({
       const result = await fetchLocationSave(pr);
       if (result.Status == "OK") {
         Alertsuccess(result.ReturnMess);
+        setOpen(false);
+        onActionComplete();
       } else {
         Alertwarning(result.ReturnMess);
       }

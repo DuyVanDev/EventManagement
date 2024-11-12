@@ -49,7 +49,7 @@ const SelectLocationComp = React.forwardRef<
 
     const getLocation = async (Id: number) => {
       try {
-        const list = await fetchLocation({ Id: Id });
+        const list = await fetchLocation({ Id: 0 });
         const dataOptions = list.map((district: any) => ({
           value: district.LocationId,
           label: district.LocationName,

@@ -1001,8 +1001,8 @@ export const calendarEvents = [
   {
     title: "History",
     allDay: false,
-    start: new Date(2024, 7, 14, 14, 0),
-    end: new Date(2024, 7, 13, 14, 45),
+    start: new Date(2024, 10, 21, 14, 0),
+    end: new Date(2024, 10, 21, 14, 45),
   },
   {
     title: "English",
@@ -1056,8 +1056,8 @@ export const calendarEvents = [
   },
   {
     title: "History",
-    allDay: false,
-    start: new Date(2024, 9, 4, 14, 0),
-    end: new Date(2024, 9, 4, 15, 0),
+    allDay: true,
+    start: new Date(2024, 11, 23, 14, 0),
+    end: new Date(2024, 11, 23, 15, 0),
   },
 ];

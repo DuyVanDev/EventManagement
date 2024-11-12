@@ -15,7 +15,7 @@ export async function fetchMethod(data: object, func: string) {
         procedureName: func,  // Tên stored procedure
         inputParameters: dataPost  // Đối tượng chứa JSON string của data
       }),
-      next: { revalidate: 60 },
+      cache: "no-store"
     });
 
     if (!response.ok) {

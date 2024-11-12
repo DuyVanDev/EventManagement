@@ -22,6 +22,8 @@ type Inputs = z.infer<typeof schema>;
 const FacultyForm = ({
   type,
   data,
+  setOpen,
+  onActionComplete,
 }: {
   type: "create" | "update";
   data?: any;
@@ -55,6 +57,8 @@ const FacultyForm = ({
       const result = await fetchFacultySave(pr);
       if (result.Status == "OK") {
         Alertsuccess(result.ReturnMess);
+        setOpen(false);
+        onActionComplete(); 
       } else {
         Alertwarning(result.ReturnMess);
       }

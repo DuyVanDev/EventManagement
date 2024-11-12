@@ -12,12 +12,13 @@ interface SelectEventTypeProps {
   Disabled?: boolean;
   onSelected?: (item: SingleValue<DistrictOption>) => void;
   Id?: number;
+  onActive?: number;
   label?: string;
   isRequired?: boolean;
 }
 
 const SelectEventTypeComp = React.forwardRef<HTMLDivElement, SelectEventTypeProps>(
-  ({ Disabled = false, onSelected = () => {}, Id = 0, label = "Tiêu đề", isRequired = false }, ref) => {
+  ({ Disabled = false, onSelected = () => {}, Id = 0, label = "Tiêu đề", isRequired = false, onActive=0 }, ref) => {
     const [data, setData] = useState<DistrictOption[]>([]);
     const [valueS, setValueS] = useState<SingleValue<DistrictOption>>(null);
 
@@ -40,7 +41,8 @@ const SelectEventTypeComp = React.forwardRef<HTMLDivElement, SelectEventTypeProp
         setData(dataOptions);
 
         // Automatically select the option if `Id` matches an option
-        const selectedOption = dataOptions.find((option) => option.value === Id) || null;
+        const selectedOption = dataOptions.find((option) => option.value === onActive) || null;
+
         setValueS(selectedOption);
       } catch (error) {
         console.error("Error fetching event type data:", error);
