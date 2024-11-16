@@ -13,7 +13,7 @@ const Menu = () => {
       items: [
         {
           icon: "/home.png",
-          label: "Home",
+          label: "Trang chủ",
           href: `/${user?.RoleTmp}`,
           visible: ["admin", "teacher", "student", "parent"],
         },
@@ -45,6 +45,12 @@ const Menu = () => {
           icon: "/calendar.png",
           label: "Sự kiện",
           href: "/list/events",
+          visible: ["admin", "teacher", "student", "parent"],
+        },
+        {
+          icon: "/exam.png",
+          label: "Loại sự kiện",
+          href: "/list/eventtype",
           visible: ["admin", "teacher", "student", "parent"],
         },
       ],

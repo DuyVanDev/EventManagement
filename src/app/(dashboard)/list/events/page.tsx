@@ -1,11 +1,13 @@
 "use client";
 
-import { fetchEventList } from "@/app/action/event";
+import { EV_spEvent_Delete, fetchEventList } from "@/app/action/event";
+import { EV_spFaculty_Delete } from "@/app/action/faculty";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { eventsData, role } from "@/lib/data";
+import { Alertsuccess, Alertwarning } from "@/utils";
 import { FormatDateJsonPro } from "@/utils/FormatDateJson";
 import Image from "next/image";
 import { useState } from "react";
@@ -48,22 +50,37 @@ const columns = [
     className: "hidden md:table-cell",
   },
   {
-    header: "Actions",
+    header: "Hành động",
     accessor: "action",
   },
 ];
 
 const EventListPage = () => {
-  const { data: EventList, mutate } = useSWR({ EventId: "0" }, fetcher);
-  console.log(EventList);
+  const { data: EventList, mutate } = useSWR({ EventId: 0 }, fetcher);
+  
+  const handleDelete = async (eventId: number) => {
+    try {
+      const result = await EV_spEvent_Delete({ EventId: eventId });
+      if (result?.Status == "OK") {
+        Alertsuccess(result?.ReturnMess);
+        mutate();
+      } else {
+        Alertwarning(result?.ReturnMess);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Set number of items per page
   const totalPages = Math.ceil(EventList?.length / itemsPerPage);
 
+
   // Get the data for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = EventList?.slice(startIndex, startIndex + itemsPerPage);
-  console.log(EventList);
+  const currentData = Array.isArray(EventList)
+    ? EventList?.slice(startIndex, startIndex + itemsPerPage)
+    : [];
 
   const renderRow = (item: Event) => (
     <tr
@@ -72,13 +89,14 @@ const EventListPage = () => {
     >
       <td className="flex items-center gap-4 p-4">{item.EventName}</td>
       <td>{item.EventTypeName}</td>
+      <td className="hidden md:table-cell">
+        {FormatDateJsonPro(item.EndTime, 5)}
+      </td>
+      <td className="hidden md:table-cell">
+        {FormatDateJsonPro(item.EndTime, 5)}
+      </td>
       <td>{item.LocationName}</td>
-      <td className="hidden md:table-cell">
-        {FormatDateJsonPro(item.EndTime, 5)}
-      </td>
-      <td className="hidden md:table-cell">
-        {FormatDateJsonPro(item.EndTime, 5)}
-      </td>
+      
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
@@ -94,6 +112,7 @@ const EventListPage = () => {
                 type="delete"
                 id={item.EventId}
                 onActionComplete={() => mutate()}
+                onActionDelete={handleDelete}
               />
             </>
           )}
@@ -131,7 +150,7 @@ const EventListPage = () => {
                   EventTypeId: 0,
                   ParticipantLimit: 0,
                   Thumnail: "",
-                  ListImage:null,
+                  ListImage: null,
                 }}
                 onActionComplete={() => mutate()}
               />

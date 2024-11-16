@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userFromStorage = JSON.parse(storedUser);
       setUser(userFromStorage);
       // Điều hướng đến trang tương ứng với vai trò của người dùng
-      document.cookie = `role=${userFromStorage.RoleTmp}; path=/; max-age=86400;`;
+      // document.cookie = `role=${userFromStorage.RoleTmp}; path=/; max-age=86400;`;
       // router.push(`/${userFromStorage?.RoleTmp}`);
     } else {
       // Nếu không có user trong localStorage, điều hướng đến trang đăng nhập

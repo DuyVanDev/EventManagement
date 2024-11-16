@@ -16,6 +16,9 @@ const LocationForm = dynamic(() => import("./forms/LocationForm"), {
 const FacultyForm = dynamic(() => import("./forms/FacultyForm"), {
   loading: () => <h1>Loading...</h1>,
 });
+const EventTypeForm = dynamic(() => import("./forms/EventTypeForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
 const EventForm = dynamic(() => import("./forms/EventForm"), {
   loading: () => <h1>Loading...</h1>,
 });
@@ -25,7 +28,8 @@ const forms: {
     type: "create" | "update",
     data: any,
     setOpen: (open: boolean) => void,
-    onActionComplete?: () => void
+    onActionComplete?: () => void,
+    onActionDelete?: () => void,
   ) => JSX.Element;
 } = {
   teacher: (type, data, setOpen, onActionComplete) => (
@@ -43,6 +47,9 @@ const forms: {
   location: (type, data, setOpen, onActionComplete) => (
     <LocationForm type={type} data={data} setOpen={setOpen} onActionComplete={onActionComplete} />
   ),
+  eventtype: (type, data, setOpen, onActionComplete) => (
+    <EventTypeForm type={type} data={data} setOpen={setOpen} onActionComplete={onActionComplete} />
+  ),
 };
 
 const FormModal = ({
@@ -51,12 +58,14 @@ const FormModal = ({
   data,
   id,
   onActionComplete,
+  onActionDelete
 }: {
-  table: "teacher" | "student" | "location" | "faculty" | "event";
+  table: "teacher" | "student" | "location" | "faculty" | "event"| "eventtype";
   type: "create" | "update" | "delete";
   data?: any;
   id?: number;
   onActionComplete?: () => void;
+  onActionDelete?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -66,19 +75,19 @@ const FormModal = ({
         onSubmit={(e) => {
           e.preventDefault();
           // Call delete action here and handle completion
-          if (onActionComplete) onActionComplete();
+          if (onActionDelete) onActionDelete(id);
           setOpen(false);
         }}
-        className="p-4 flex flex-col gap-4"
+        className="p-4 flex flex-col gap-4  overflow-y-auto"
       >
         <span className="text-center font-medium">
-          All data will be lost. Are you sure you want to delete this {table}?
+          Bạn có chắc muốn xóa dữ liệu ? 
         </span>
         <button
           type="submit"
           className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center"
         >
-          Delete
+          Đồng ý
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
@@ -100,7 +109,7 @@ const FormModal = ({
       </button>
       {open && (
         <div className="w-screen h-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-md relative w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%]">
+          <div className="bg-white p-4 rounded-md relative w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%] max-h-[90%] overflow-y-auto">
             <Form />
             <div
               className="absolute top-4 right-4 cursor-pointer"

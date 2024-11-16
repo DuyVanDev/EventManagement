@@ -1,25 +1,12 @@
 "use client";
 import { fetchEventList } from "@/app/action/event";
+import { useAuth } from "@/context/AuthContext";
+import { Alertsuccess, Alertwarning, FormatDateJsonPro } from "@/utils";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 
 const fetcher = (params: object) => fetchEventList(params);
-const mockBlogPost = {
-  title: "Understanding Next.js and Tailwind CSS",
-  author: "Jane Doe",
-  date: "November 8, 2024",
-  content: `
-    <p>Next.js and Tailwind CSS are a powerful combination for building web applications. In this blog post, we explore how to use Next.js, a React framework, with Tailwind CSS for styling.</p>
-    <h2>Why Next.js?</h2>
-    <p>Next.js provides server-side rendering and static site generation, which improves performance and SEO. It also simplifies routing and API integration in React apps.</p>
-    <h2>Why Tailwind CSS?</h2>
-    <p>Tailwind CSS is a utility-first CSS framework that allows for rapid styling directly within HTML and JSX files. This approach makes it easy to build responsive layouts without custom CSS files.</p>
-  `,
-  comments: [
-    { id: 1, name: "John", message: "Great post!" },
-    { id: 2, name: "Emma", message: "Really helpful, thanks!" },
-  ],
-};
+
 const mockOtherPosts = [
   { id: "1", title: "Getting Started with React", author: "Alice" },
   { id: "2", title: "Why Choose Next.js?", author: "Bob" },
@@ -28,37 +15,57 @@ const mockOtherPosts = [
 ];
 const BlogDetail = ({ params }: { params: { id: number } }) => {
   const { id } = params;
-  console.log(id);
-  const [blogPost, setBlogPost] = useState(null);
+  const { user } = useAuth();
+  const { data: Event, mutate } = useSWR({ EventId: id,UserId: user?.UserId }, fetcher);
 
-  // Giả lập API call
-  useEffect(() => {
-    if (id) {
-      setBlogPost(mockBlogPost); // Thay thế bằng API fetch dữ liệu thực tế
+  const handleRegisterEvent = async (item) => {
+    try {
+      const pr = {
+        EventId: id,
+        StudentId: user?.UserId,
+        AttendanceStatus: 0,
+      };
+      const res = await EV_spEventStudent_Register(pr);
+      if (res?.Status == "OK") {
+        Alertsuccess(res?.ReturnMess);
+      } else {
+        Alertwarning(res?.ReturnMess);
+      }
+    } catch (err) {
+      console.log(err);
     }
-  }, [id]);
+  };
+  console.log(Event)
 
-  if (!blogPost) return <p>Loading...</p>;
-  // const { data: ListData, mutate } = useSWR({ EventId: id }, fetcher);
+  if (!Event) return <p>Loading...</p>;
   return (
     <div className=" mx-auto py-8 px-4 flex flex-col md:flex-row">
       {/* Nội dung chính của bài viết */}
       <div className="flex-1 md:pr-8">
-        <h1 className="text-4xl font-bold mb-4 text-gray-800">
-          {blogPost.title}
+        <h1 className="text-3xl font-bold mb-4 text-gray-800">
+          {Event[0]?.EventName}
         </h1>
-        <div className="flex items-center text-sm text-gray-500 mb-6">
-          <span>By {blogPost.author}</span>
+        <div className="flex items-center text-sm text-gray-500 mb-6 gap-2">
+          <span>Đăng bởi: Admin</span>
           <span className="mx-2">|</span>
-          <span>{blogPost.date}</span>
+          <span>Ngày bắt đầu: {FormatDateJsonPro(Event[0]?.StartTime, 7)}</span>
+          {!Event[0]?.IsRegister && Event[0]?.IsRegister != 0 && (
+            <button
+              onClick={() => {
+                handleRegisterEvent(Event[0]);
+              }}
+              className=" px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Đăng ký
+            </button>
+          )}
         </div>
         <div
           className="prose prose-lg max-w-none mb-8 text-gray-700"
-          dangerouslySetInnerHTML={{ __html: blogPost.content }}
+          dangerouslySetInnerHTML={{ __html: Event[0]?.EventDescription }}
         />
 
         {/* Phần bình luận */}
-        
       </div>
 
       {/* RightBar hiển thị các bài viết khác */}

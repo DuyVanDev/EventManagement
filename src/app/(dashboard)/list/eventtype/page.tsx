@@ -1,59 +1,62 @@
 "use client";
-import { fetchLocaitonList } from "@/app/action/location";
+import { EV_spEventType_Delete, EV_spEventType_List } from "@/app/action/event";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role, subjectsData } from "@/lib/data";
+import { role } from "@/lib/data";
+import { Alertsuccess, Alertwarning } from "@/utils";
 import Image from "next/image";
 import { useState } from "react";
 import useSWR from "swr";
 
 
 type Subject = {
-  LocationId: number;
-  LocationName: string;
-  Address: string;
-  Capacity: number;
+  Id: number;
+  EventTypeName: string;
 };
 
-const fetcher = (params: object) => fetchLocaitonList(params);
+const fetcher = (params: object) => EV_spEventType_List(params);
 
 const columns = [
   {
-    header: "Tên địa điểm",
-    accessor: "LocationName",
+    header: "Tên loại sự kiện",
+    accessor: "EventTypeName",
   },
-  {
-    header: "Địa chỉ",
-    accessor: "Address",
-  },
-  {
-    header: "Sức chứa",
-    accessor: "Capacity",
-  },
+ 
   {
     header: "Actions",
     accessor: "action",
   },
 ];
 
-const LocationListPage =  () => {
-  const { data: ListData, mutate } = useSWR({}, fetcher);
+const EventTypeListPage =  () => {
+  const { data: ListData, mutate } = useSWR({Id : 0}, fetcher);
+  const handleDelete = async (id: number) => {
+    try {
+      const result = await EV_spEventType_Delete({ Id: id });
+      if (result?.Status == "OK") {
+        Alertsuccess(result?.ReturnMess);
+        mutate();
+      } else {
+        Alertwarning(result?.ReturnMess);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const renderRow = (item: Subject) => (
     <tr
-      key={item.LocationId}
+      key={item.Id}
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
     >
-      <td className=" py-4">{item.LocationName}</td>
-      <td className=" py-4">{item.Address}</td>
-      <td className=" py-4">{item.Capacity}</td>
+      <td className=" py-4">{item.EventTypeName}</td>
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="location" type="update" data={item} onActionComplete={() => mutate()} />
-              <FormModal table="location" type="delete" id={item.LocationId} onActionComplete={() => mutate()}/>
+              <FormModal table="eventtype" type="update" data={item} onActionComplete={() => mutate()} />
+              <FormModal table="eventtype" type="delete" id={item.Id} onActionComplete={() => mutate()} onActionDelete={handleDelete}/>
             </>
           )}
         </div>
@@ -77,7 +80,7 @@ const LocationListPage =  () => {
       {/* TOP */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">
-          Danh Sách Địa Điểm
+          Danh Sách Loại Sự Kiện
         </h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
@@ -90,13 +93,11 @@ const LocationListPage =  () => {
             </button>
             {role === "admin" && (
               <FormModal
-                table="location"
+                table="eventtype"
                 type="create"
                 data={{
-                  LocationId: 0,
-                  LocationName: "",
-                  Address: "",
-                  Capacity: 0,
+                  Id: 0,
+                  EventTypeName: "",
                 }}
                 onActionComplete={() => mutate()}
               />
@@ -116,4 +117,4 @@ const LocationListPage =  () => {
   );
 };
 
-export default LocationListPage;
+export default EventTypeListPage;

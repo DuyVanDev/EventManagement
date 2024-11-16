@@ -42,7 +42,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
         disabled={currentPage === 1}
         className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Prev
+        Trước
       </button>
       <div className="flex items-center gap-2 text-sm">
         {renderPageNumbers()}
@@ -59,7 +59,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
         disabled={currentPage === totalPages}
         className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Next
+        Sau
       </button>
     </div>
   );

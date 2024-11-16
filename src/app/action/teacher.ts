@@ -15,3 +15,14 @@ export const EV_spTeacher_Save = async (data: FetchTeacherSave) => {
     return await fetchMethod(data, "EV_spTeacher_Save");
   } catch (error) {}
 };
+
+
+interface EV_spTeacher_Delete {
+  UserId?: number;
+}
+
+export const EV_spTeacher_Delete = async (data: FetchTeacherSave) => {
+  try {
+    return await fetchMethod(data, "EV_spTeacher_Delete");
+  } catch (error) {}
+};

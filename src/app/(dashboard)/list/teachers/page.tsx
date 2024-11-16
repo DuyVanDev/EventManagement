@@ -1,10 +1,12 @@
 "use client"
+import { EV_spTeacher_Delete } from "@/app/action/teacher";
 import { fetchTeacher } from "@/app/action/user";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { role, teachersData } from "@/lib/data";
+import { Alertsuccess, Alertwarning } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -62,6 +64,20 @@ const TeacherListPage = () => {
   // Get the data for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentData = ListData?.slice(startIndex, startIndex + itemsPerPage);
+
+  const handleDelete = async (userid: number) => {
+    try {
+      const result = await EV_spTeacher_Delete({ UserId: userid });
+      if (result?.Status == "OK") {
+        Alertsuccess(result?.ReturnMess);
+        mutate();
+      } else {
+        Alertwarning(result?.ReturnMess);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const renderRow = (item: Teacher) => (
     <tr
       key={item.UserId}
@@ -98,7 +114,7 @@ const TeacherListPage = () => {
             // <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
             //   <Image src="/delete.png" alt="" width={16} height={16} />
             // </button>
-            <FormModal table="teacher" type="delete" id={item.UserId} />
+            <FormModal table="teacher" type="delete" id={item.UserId} onActionDelete={handleDelete} />
           )}
         </div>
       </td>

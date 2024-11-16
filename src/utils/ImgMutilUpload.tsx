@@ -12,7 +12,7 @@ interface ImgMutilUploadProps {
   isReset?: number;
   isMutil?: boolean;
   readOnly?: boolean;
-  label? : string;
+  label?: string;
 }
 
 const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
@@ -23,7 +23,7 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
   isReset = 0,
   isMutil = false,
   readOnly = false,
-  label = "Tải hình ảnh"
+  label = "Tải hình ảnh",
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -105,7 +105,6 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
         setI((prev) => [...prev, imageUrl]);
         onData(i.join(",")); // Trả về URL các ảnh đã upload
       }
-
     } catch (error) {
       console.error("Lỗi khi upload ảnh:", error);
       Alerterror("Upload ảnh thất bại!");
@@ -174,10 +173,20 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
                   className="w-[200px] max-h-[150px] object-contain"
                 />
                 {!readOnly && (
-                  <i
-                    className="fa fa-times p-2 text-danger cursor-pointer absolute top-0 right-0 btn-cursor"
-                    onClick={() => onFileDelete(item)}
-                  ></i>
+                  <>
+                    <div
+                      className="p-2 text-danger cursor-pointer absolute top-0 right-0 btn-cursor"
+                      onClick={() => onFileDelete(item)}
+                    >
+                      <Image
+                        src="/close.png"
+                        alt="Close"
+                        width={14}
+                        height={14}
+                      />
+                    </div>
+                  
+                  </>
                 )}
               </div>
             ))}

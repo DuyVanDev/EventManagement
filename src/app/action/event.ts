@@ -25,6 +25,17 @@ interface FetchEventType {
   Id?: number;
 }
 
+export const EV_spEventType_List = async (data: EV_spEventType_List) => {
+  try {
+    return await fetchMethod(data, "EV_spEventType_List");
+  } catch (error) {}
+};
+
+
+interface EV_spEventType_List {
+  Id?: number;
+}
+
 export const fetchEventType = async (data: FetchEventType) => {
   try {
     return await fetchMethod(data, "EV_spEventType_Select");
@@ -79,7 +90,7 @@ interface EV_spEventStudentRegisted_List {
 
 export const EV_spEventStudentRegisted_List = async (data: EV_spEventStudentRegisted_List) => { // Lấy danh sách sự kiện đã đăng ký
   try {
-    return await fetchMethod(data, "EV_spEventStudentRegisted_List");
+    return await fetchMethod(data, "EV_spEvent_GetByUserId");
   } catch (error) {}
 };
 
@@ -90,4 +101,33 @@ export const EV_spUserRoleAndGenderCount = async (data: any) => { // Lấy danh 
   } catch (error) {}
 };
 
+interface EV_spEvent_Delete {
+  EventId? :number;
+}
 
+export const EV_spEvent_Delete = async (data: EV_spEvent_Delete) => { // Lấy danh sách sự kiện đã đăng ký
+  try {
+    return await fetchMethod(data, "EV_spEvent_Delete");
+  } catch (error) {}
+};
+
+interface EV_spEventType_Save {
+  Id?: number;
+  EventTypeName : string;
+}
+
+export const EV_spEventType_Save = async (data: EV_spEventType_Save) => {
+  try {
+    return await fetchMethod(data, "EV_spEventType_Save");
+  } catch (error) {}
+};
+
+interface EV_spEventType_Delete {
+  Id?: number;
+}
+
+export const EV_spEventType_Delete = async (data: EV_spEventType_Delete) => {
+  try {
+    return await fetchMethod(data, "EV_spEventType_Delete");
+  } catch (error) {}
+};

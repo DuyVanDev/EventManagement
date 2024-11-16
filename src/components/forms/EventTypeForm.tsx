@@ -6,20 +6,20 @@ import { z } from "zod";
 import InputField from "../InputField";
 
 import { useEffect } from "react";
-import { EV_spEvent_Save } from "@/app/action/event";
+import { EV_spEvent_Save, EV_spEventType_Save } from "@/app/action/event";
 import { fetchFacultySave } from "@/app/action/faculty";
 import { Alertsuccess, Alertwarning } from "@/utils/Notifications";
 
 const schema = z.object({
-  FacultyId: z.number(),
-  FacultyName: z
+  Id: z.number(),
+  EventTypeName: z
     .string()
-    .min(6, { message: "Tên khoa-viện phải có ít nhất 6 ký tự" }),
+    .min(2, { message: "Tên loại sự kiện phải có ít nhất 2 ký tự" }),
 });
 
 type Inputs = z.infer<typeof schema>;
 
-const FacultyForm = ({
+const EventTypeForm = ({
   type,
   data,
   setOpen,
@@ -38,24 +38,24 @@ const FacultyForm = ({
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
     defaultValues: {
-      FacultyId: data.FacultyId,
-      FacultyName: data.FacultyName,
+      Id: data.Id,
+      EventTypeName: data.EventTypeName,
     },
   });
 
   useEffect(() => {
     if (data) {
-      setValue("FacultyId", data.FacultyId);
-      setValue("FacultyName", data.FacultyName);
+      setValue("Id", data.Id);
+      setValue("EventTypeName", data.EventTypeName);
     }
   }, [data, setValue]);
   const onSubmit = handleSubmit(async (dataform) => {
     try {
       const pr = {
-        FacultyId: dataform?.FacultyId,
-        FacultyName: dataform?.FacultyName,
+        Id: dataform?.Id,
+        EventTypeName: dataform?.EventTypeName,
       };
-      const result = await fetchFacultySave(pr);
+      const result = await EV_spEventType_Save(pr);
       if (result.Status == "OK") {
         Alertsuccess(result.ReturnMess);
         setOpen(false);
@@ -70,15 +70,15 @@ const FacultyForm = ({
 
   return (
     <form className="flex flex-col gap-2" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">Thêm mới Khoa - Viện</h1>
+      <h1 className="text-xl font-semibold">Thêm mới loại sự kiện</h1>
 
       <div className="grid grid-cols-1 gap-4">
         <InputField
-          label="Tên Khoa - Viện"
-          name="FacultyName"
-          defaultValue={data?.FacultyName}
+          label="Tên loại sự kiện"
+          name="EventTypeName"
+          defaultValue={data?.EventTypeName}
           register={register}
-          error={errors?.FacultyName}
+          error={errors?.EventTypeName}
         />
       </div>
       <button className="bg-blue-400 text-white p-2 rounded-md">
@@ -88,4 +88,4 @@ const FacultyForm = ({
   );
 };
 
-export default FacultyForm;
+export default EventTypeForm;

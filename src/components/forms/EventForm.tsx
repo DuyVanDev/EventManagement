@@ -23,9 +23,9 @@ const schema = z.object({
   EventId: z.number(),
   EventName: z
     .string()
-    .min(10, { message: "Tên sự kiện phải có ít nhất 10 ký tự!" }),
+    .min(5, { message: "Tên sự kiện phải có ít nhất 5 ký tự!" }),
   EventDescription: z.string().min(1, { message: "Hãy nhập mô tả sự kiện!" }),
-  ParticipantLimit: z.number(),
+  ParticipantLimit: z.any(),
   Time: z.any(),
   LectureId: z.any(),
   LocationId: z.number().min(1, { message: "Vui lòng chọn địa điểm!" }),
@@ -64,7 +64,7 @@ const EventForm = ({
       EventTypeId: data.EventTypeId,
       ParticipantLimit: data.ParticipantLimit,
       Thumnail: data.Thumnail,
-      ListImage: data.ListImage.split(";").filter(Boolean),
+      ListImage: data?.ListImage?.split(";").filter(Boolean) || [],
     },
   });
   //#region  thumnail
@@ -82,14 +82,15 @@ const EventForm = ({
   //#endregion
 
   // #region danh sach ảnh
-  const [images, setImages] = useState(data?.ListImage);
+  const [images, setImages] = useState(data?.ListImage ? data?.ListImage?.split(';') : []);
   const [uploadedListImage, setUploadedListImage] = useState([]);
-  console.log(typeof images);
 
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
-    setImages(files);
+    setUploadedListImage(files);
   };
+  const combinedImages = [...images, ...uploadedListImage];
+
 
   // #endregion
   useEffect(() => {
@@ -99,7 +100,7 @@ const EventForm = ({
       setValue("ParticipantLimit", data.ParticipantLimit);
       setValue("Time", [data.StartTime, data.EndTime]);
       setValue("Thumnail", data.Thumnail);
-      setValue("ListImage", data.ListImage.split(";").filter(Boolean));
+      setValue("ListImage", data?.ListImage?.split(";").filter(Boolean) || []);
     }
   }, [data, setValue]);
 
@@ -116,6 +117,7 @@ const EventForm = ({
   };
 
   const onSubmit = handleSubmit(async (dataform) => {
+    debugger;
     try {
       let _newThumnail = "";
       if (uploadedThumnail.length > 0 && Array.isArray(uploadedThumnail)) {
@@ -139,17 +141,18 @@ const EventForm = ({
         return;
       }
       let _newListImage = "";
-      if (uploadedThumnail.length > 0 && Array.isArray(uploadedThumnail)) {
+      if (uploadedListImage.length > 0 && Array.isArray(uploadedListImage)) {
         let listimage = "";
         if (
           uploadedListImage !== "" &&
           uploadedListImage.length > 0 &&
-          Array.isArray(uploadedThumnail)
+          Array.isArray(uploadedListImage)
         ) {
-          listimage = await CallUploadImage(uploadedListImage);
+          listimage = await CallUploadImage(combinedImages);
         }
-        _newListImage = [listimage]
+        _newListImage = listimage
           .filter((p) => p !== "" && p !== undefined && p !== "undefined")
+          .map((item) => item.url)
           .join(";");
       } else if (
         typeof uploadedListImage === "string" ||
@@ -295,7 +298,6 @@ const EventForm = ({
             flag={flag}
             isReset={isReset}
             isMutil={isMutil}
-            readOnly={false} // Cho phép người dùng upload ảnh
           />
         </div>
         <div className="max-w-md mx-auto">
@@ -317,14 +319,14 @@ const EventForm = ({
 
           {/* Khu vực hiển thị ảnh đã tải lên */}
           <div className="flex space-x-2 mt-4">
-            {images.length > 0 ? (
-              images.slice(0, 3).map((image, index) => (
+            {combinedImages.length > 0 ? (
+              combinedImages.slice(0, 3).map((image, index) => (
                 <div
                   key={index}
                   className="relative w-20 h-20 rounded overflow-hidden"
                 >
                   <img
-                    src={URL.createObjectURL(image)}
+                    src={typeof image === 'string' ? image : URL.createObjectURL(image)}
                     alt={`Image ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -341,10 +343,10 @@ const EventForm = ({
             )}
 
             {/* Hiển thị số lượng ảnh còn lại nếu có */}
-            {images.length > 3 && (
+            {combinedImages.length > 3 && (
               <div className="relative w-20 h-20 rounded overflow-hidden">
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white font-semibold text-lg">
-                  +{images.length - 3}
+                  +{combinedImages.length - 3}
                 </div>
               </div>
             )}

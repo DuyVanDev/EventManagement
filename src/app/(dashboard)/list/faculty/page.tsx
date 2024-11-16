@@ -1,10 +1,11 @@
-"use client"
-import { fetchFacultyList } from "@/app/action/faculty";
+"use client";
+import { EV_spFaculty_Delete, fetchFacultyList } from "@/app/action/faculty";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { role, subjectsData } from "@/lib/data";
+import { Alertsuccess, Alertwarning } from "@/utils";
 import Image from "next/image";
 import useSWR from "swr";
 type Subject = {
@@ -23,12 +24,23 @@ const columns = [
   },
 ];
 
-
 const fetcher = (params: object) => fetchFacultyList(params);
 
 const FacultyListPage = () => {
-  const { data: ListData, mutate } = useSWR({ FacultyId: '0' }, fetcher);
-  console.log(ListData);
+  const { data: ListData, mutate } = useSWR({ FacultyId: "0" }, fetcher);
+  const handleDelete = async (facultyId: number) => {
+    try {
+      const result = await EV_spFaculty_Delete({ FacultyId: facultyId });
+      if (result?.Status == "OK") {
+        Alertsuccess(result?.ReturnMess);
+        mutate();
+      } else {
+        Alertwarning(result?.ReturnMess);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const renderRow = (item: Subject) => (
     <tr
       key={item.FacultyId}
@@ -39,8 +51,19 @@ const FacultyListPage = () => {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="faculty" type="update" data={item} onActionComplete={() => mutate()}/>
-              <FormModal table="faculty" type="delete" id={item.FacultyId} onActionComplete={() => mutate()}/>
+              <FormModal
+                table="faculty"
+                type="update"
+                data={item}
+                onActionComplete={() => mutate()}
+              />
+              <FormModal
+                table="faculty"
+                type="delete"
+                id={item.FacultyId}
+                onActionComplete={() => mutate()}
+                onActionDelete={handleDelete}
+              />
             </>
           )}
         </div>

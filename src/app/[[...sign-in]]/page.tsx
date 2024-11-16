@@ -1,7 +1,6 @@
 "use client";
 import InputField from "@/components/InputField";
 import { useAuth } from "@/context/AuthContext";
-import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

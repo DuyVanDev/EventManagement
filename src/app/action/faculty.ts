@@ -30,4 +30,15 @@ interface FetchFaculty {
   
   
   
+  interface EV_spFaculty_Delete {
+    FacultyId?: number;
+  }
+
+  export const EV_spFaculty_Delete = async (data: EV_spFaculty_Delete) => {
+    try {
+      return await fetchMethod(data, "EV_spFaculty_Delete");
+    } catch (error) {}
+  };
+  
+  
   
