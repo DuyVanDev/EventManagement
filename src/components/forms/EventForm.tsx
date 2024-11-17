@@ -18,6 +18,7 @@ import { Alerterror, Alertsuccess, Alertwarning } from "@/utils/Notifications";
 import { FormatDateJsonPro } from "@/utils/FormatDateJson";
 import ImgMutilUploadComp from "@/utils/ImgMutilUpload";
 import { CallUploadImage } from "@/utils/CallUploadImage";
+import { sendNotification } from "@/app/action/sendnotify";
 
 const schema = z.object({
   EventId: z.number(),
@@ -116,6 +117,11 @@ const EventForm = ({
     setIsReset(Math.random());
   };
 
+  const convertToArray = (pr : string) => {
+    const convertedArray = pr.split(';').map(Number); // Tách chuỗi và chuyển thành mảng số
+    return convertedArray
+  };
+
   const onSubmit = handleSubmit(async (dataform) => {
     debugger;
     try {
@@ -181,6 +187,8 @@ const EventForm = ({
         Alertsuccess(result.ReturnMess);
         setOpen(false);
         onActionComplete();
+        const a = convertToArray(dataform?.LecturerId)
+        await sendNotification({message : "Thầy cô tham gia", userIds : a, eventId : dataform?.EventId})
       } else {
         Alertwarning(result.ReturnMess);
       }

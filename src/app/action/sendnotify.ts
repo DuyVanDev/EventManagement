@@ -1,14 +1,15 @@
 import envConfig from "@/config";
 
-export const sendNotification = async (message : string, userIds : any) => {
-    const response = await fetch(`${envConfig.NEXT_PUBLIC_BASE_URL}/notifications/send`, {
+export const sendNotification = async ({message , userIds , eventId } : {message : string, userIds : any, eventId : number}) => {
+    const response = await fetch(`${envConfig.NEXT_PUBLIC_BASE_URL}/notifications/sendNotification`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            Message: message,
-            UserIds: userIds, // Truyền danh sách UserIds
+            message: message,
+            userIds: userIds, // Truyền danh sách UserIds
+            eventId: eventId, // Truyền danh sách UserIds
         }),
     });
 

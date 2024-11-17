@@ -43,8 +43,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userFromStorage = JSON.parse(storedUser);
       setUser(userFromStorage);
       // Điều hướng đến trang tương ứng với vai trò của người dùng
-      // document.cookie = `role=${userFromStorage.RoleTmp}; path=/; max-age=86400;`;
-      // router.push(`/${userFromStorage?.RoleTmp}`);
+      document.cookie = `role=${userFromStorage.RoleTmp}; path=/; max-age=86400;`;
+      router.push(`/${userFromStorage?.RoleTmp}`);
     } else {
       // Nếu không có user trong localStorage, điều hướng đến trang đăng nhập
       if (router.pathname !== "/sign-in") {
@@ -78,8 +78,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Logout function
   const logout = () => {
     setUser(null);
+    localStorage.removeItem("userEvent");
     document.cookie = "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
     window.location.href = "/sign-in";
+
   };
 
   return (

@@ -4,16 +4,26 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import envConfig from "@/config";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import { EV_spNotificationQueue_GET } from "@/app/action/notify";
+import useSWR from "swr";
+
+const fetcher = (params: object) => EV_spNotificationQueue_GET(params);
 
 const NotificationTest = () => {
+  const { user } = useAuth();
+
+  const { data: Data, mutate } = useSWR(
+    { Id: 0, UserId: user?.UserId },
+    fetcher
+  );
+
+  console.log(Data?.count)
+
   const [message, setMessage] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [notifications, setNotifications] = useState<string[]>([]);
   const [notificationCount, setNotificationCount] = useState(0);
-  const { user } = useAuth();
   useEffect(() => {
-    debugger;
-    console.log(user);
     if (!user?.UserId) return;
 
     const hubConnection = new HubConnectionBuilder()
@@ -27,6 +37,7 @@ const NotificationTest = () => {
       setMessage(message); // Lưu message vào state
       setNotificationCount((prev) => prev + 1); // Tăng số lượng thông báo
       setShowDropdown(true); // Hiển thị dropdown
+      mutate()
     });
 
     // Khởi tạo kết nối
@@ -34,13 +45,11 @@ const NotificationTest = () => {
       .start()
       .then(() => {
         console.log("Connected to SignalR!");
-      alert("Connect success")
-
+        alert("Connect success");
       })
       .catch((err) => {
         console.error("Error while starting connection: " + err);
-      alert("Connect er")
-
+        alert("Connect er");
       });
 
     // Dọn dẹp khi component unmount
@@ -78,7 +87,7 @@ const NotificationTest = () => {
         />
         {/* Số thông báo */}
         <div className="absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-purple-500 text-white rounded-full text-xs">
-          {notificationCount}
+          {Data?.count || 0}
         </div>
       </div>
 

@@ -13,3 +13,15 @@ interface EV_spNotification_Save {
     } catch (error) {}
   };
   
+
+  
+interface EV_spNotificationQueue_GET {
+  Id?: number;
+  UserId: number;
+}
+
+export const EV_spNotificationQueue_GET = async (data: EV_spNotificationQueue_GET) => {
+  try {
+    return await fetchMethod(data, "EV_spNotificationQueue_GET");
+  } catch (error) {}
+};
