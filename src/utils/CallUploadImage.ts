@@ -1,3 +1,4 @@
+import envConfig from "@/config";
 import axios from "axios";
 
 export const CallUploadImage = async (files: File[]): Promise<any[]> => {
@@ -9,7 +10,7 @@ export const CallUploadImage = async (files: File[]): Promise<any[]> => {
             formData.append("file", file);
 
             const response = await axios.post(
-                "http://localhost:5097/upload",
+                `${envConfig.NEXT_PUBLIC_API_UPLOAD}`,
                 formData,
                 {
                     headers: {

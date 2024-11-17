@@ -1,3 +1,5 @@
+import envConfig from "@/config";
+
 export async function fetchMethod(data: object, func: string) {
   try {
     // Tạo object dataPost với tham số data chuyển thành chuỗi JSON
@@ -6,7 +8,7 @@ export async function fetchMethod(data: object, func: string) {
     };
 
     // Gọi API với POST request
-    const response = await fetch("http://localhost:5097/api/StoredProcedure/execute", {
+    const response = await fetch(`${envConfig.NEXT_PUBLIC_BASE_URL}/StoredProcedure/execute`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

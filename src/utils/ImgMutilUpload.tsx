@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { Alerterror, Alertwarning } from "./Notifications";
+import envConfig from "@/config";
 
 interface ImgMutilUploadProps {
   data?: string;
@@ -91,7 +92,7 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
         formData.append("file", file);
 
         const response = await axios.post(
-          "http://localhost:5097/upload",
+         `${envConfig.NEXT_PUBLIC_API_UPLOAD}`,
           formData,
           {
             headers: {

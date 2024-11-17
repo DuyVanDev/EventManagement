@@ -5,6 +5,7 @@ import {
   fetchEventList,
 } from "@/app/action/event";
 import BigCalendar from "@/components/BigCalender";
+import NotificationTest from "@/components/NotificationTest";
 import { useAuth } from "@/context/AuthContext";
 import { FormatDateJsonPro, CalculateTimeAgo } from "@/utils";
 import { Alertsuccess, Alertwarning } from "@/utils/Notifications";
@@ -94,6 +95,8 @@ const StudentPage = () => {
 
   return (
     <div className=" text-gray-800 font-sans">
+      <NotificationTest />
+
       <div className="container mx-auto p-4">
         <div className="flex">
           {/* Main Content */}

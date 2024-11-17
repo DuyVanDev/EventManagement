@@ -1,6 +1,5 @@
 'use client'
 import { useAuth } from "@/context/AuthContext";
-import { role } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -9,7 +8,7 @@ const Menu = () => {
   console.log(user)
   const menuItems = [
     {
-      title: "MENU",
+      title: "LỐI TẮT",
       items: [
         {
           icon: "/home.png",
@@ -45,36 +44,19 @@ const Menu = () => {
           icon: "/calendar.png",
           label: "Sự kiện",
           href: "/list/events",
-          visible: ["admin", "teacher", "student", "parent"],
+          visible: ["admin"],
         },
         {
           icon: "/exam.png",
           label: "Loại sự kiện",
           href: "/list/eventtype",
-          visible: ["admin", "teacher", "student", "parent"],
-        },
-      ],
-    },
-    {
-      title: "OTHER",
-      items: [
-        {
-          icon: "/profile.png",
-          label: "Profile",
-          href: "/profile",
-          visible: ["admin", "teacher", "student", "parent"],
+          visible: ["admin"],
         },
         {
-          icon: "/setting.png",
-          label: "Settings",
-          href: "/settings",
-          visible: ["admin", "teacher", "student", "parent"],
-        },
-        {
-          icon: "/logout.png",
-          label: "Logout",
-          href: "/logout",
-          visible: ["admin", "teacher", "student", "parent"],
+          icon: "/exam.png",
+          label: "Sự kiện của tôi",
+          href: "/myevent",
+          visible: ["student"],
         },
       ],
     },
@@ -87,7 +69,7 @@ const Menu = () => {
             {i.title}
           </span>
           {i.items.map((item) => {
-            if (item.visible.includes(role)) {
+            if (item.visible.includes(user?.RoleTmp)) {
               return (
                 <Link
                   href={item.href}

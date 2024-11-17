@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "@/context/AuthContext";
+import Notification from "@/components/Notification";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,25 +19,26 @@ export default function RootLayout({
 }>) {
   return (
     <AuthProvider>
-        <html lang="en">
-          {/* Same as */}
-          <body className={inter.className}>
-            <ToastContainer
-              position="bottom-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
-            {children}
-            <ToastContainer />
-          </body>
-        </html>
+      <html lang="en">
+        {/* Same as */}
+        <body className={inter.className}>
+          {/* <Notification /> */}
+          <ToastContainer
+            position="bottom-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+          {children}
+          <ToastContainer />
+        </body>
+      </html>
     </AuthProvider>
   );
 }
