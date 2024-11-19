@@ -117,11 +117,6 @@ const EventForm = ({
     setIsReset(Math.random());
   };
 
-  const convertToArray = (pr : string) => {
-    const convertedArray = pr.split(';').map(Number); // Tách chuỗi và chuyển thành mảng số
-    return convertedArray
-  };
-
   const onSubmit = handleSubmit(async (dataform) => {
     debugger;
     try {
@@ -187,10 +182,10 @@ const EventForm = ({
         Alertsuccess(result.ReturnMess);
         setOpen(false);
         onActionComplete();
-        const a = convertToArray(dataform?.LecturerId)
-        await sendNotification({message : "Thầy cô tham gia", userIds : a, eventId : dataform?.EventId})
-      } else {
+      }
+      else {
         Alertwarning(result.ReturnMess);
+
       }
     } catch (err) {
       console.log(err);

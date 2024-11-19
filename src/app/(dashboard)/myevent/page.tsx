@@ -61,7 +61,7 @@ const StudentPage = () => {
     const transformedEvents = ListDataRegisted?.map(transformApiData);
     setLstData(transformedEvents);
   }, [ListDataRegisted]);
-  console.log("ádasdasddddđ");
+
   console.log(ListDataRegisted);
   return (
     <div className="h-full">
@@ -95,7 +95,7 @@ const StudentPage = () => {
                   <div className="flex items-center text-gray-600">
                     {/* <span className="bg-gray-200 px-2 py-1 rounded-full text-sm mr-2">{article.category}</span> */}
                     <div className="text-sm mr-2">
-                      Ngày tổ chức: {FormatDateJsonPro(article.StartTime, 7)}
+                      Ngày tổ chức: {article?.StartTime}
                     </div>
                     {/* {article.selectedForYou && <span className="text-sm mr-2">· Selected for you</span>} */}
                   </div>

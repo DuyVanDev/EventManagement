@@ -22,7 +22,6 @@ export default function RootLayout({
       <html lang="en">
         {/* Same as */}
         <body className={inter.className}>
-          {/* <Notification /> */}
           <ToastContainer
             position="bottom-right"
             autoClose={5000}

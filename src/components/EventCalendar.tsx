@@ -1,6 +1,8 @@
 "use client";
 
+import { FormatDateJsonPro } from "@/utils";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -25,22 +27,32 @@ const EventCalendar = ({ events }: { events: any }) => {
         {events?.length > 0 ? (
           <div>
             {events?.map((event) => (
-              <div
-                className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-lamaSky even:border-t-lamaPurple"
-                key={event.id}
-              >
-                <div className="flex items-center justify-between">
-                  <h1 className="font-semibold text-gray-600">{event.title}</h1>
-                  <span className="text-gray-300 text-xs">{event.time}</span>
+              <Link href={`/blog/${event?.EventId}`} key={event.EventId}>
+                <div className="p-2 rounded-md shadow-lg border-gray-100 ">
+                  <div className="flex items-center justify-between">
+                    <h1 className="font-semibold text-gray-600">
+                      {event.EventName}
+                    </h1>
+                    <span className="text-gray-300 text-xs">
+                      {FormatDateJsonPro(event.StartTime, 7)}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-gray-400 text-sm line-clamp-2">
+                    <div
+                      className=""
+                      dangerouslySetInnerHTML={{
+                        __html: event.EventDescription,
+                      }}
+                    />
+                  </p>
                 </div>
-                <p className="mt-2 text-gray-400 text-sm">
-                  {event.description}
-                </p>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (
-          <div className="text-center text-sky-500 pt-4">Không có sự kiện sắp diễn ra</div>
+          <div className="text-center text-sky-500 pt-4">
+            Không có sự kiện sắp diễn ra
+          </div>
         )}
       </div>
     </div>

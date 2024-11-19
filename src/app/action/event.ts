@@ -131,3 +131,14 @@ export const EV_spEventType_Delete = async (data: EV_spEventType_Delete) => {
     return await fetchMethod(data, "EV_spEventType_Delete");
   } catch (error) {}
 };
+
+
+interface EV_spStudentOfEvent_GET {
+  EventId?: number;
+}
+
+export const EV_spStudentOfEvent_GET = async (data: EV_spStudentOfEvent_GET) => {
+  try {
+    return await fetchMethod(data, "EV_spStudentOfEvent_GET");
+  } catch (error) {}
+};

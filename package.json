@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/elements": "^0.19.3",
-    "@clerk/nextjs": "^6.3.4",
+    "@clerk/elements": "^0.19.4",
+    "@clerk/nextjs": "^6.4.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
@@ -25,6 +25,7 @@
     "react": "^18",
     "react-big-calendar": "^1.13.2",
     "react-calendar": "^5.0.0",
+    "react-datepicker": "^7.5.0",
     "react-dom": "^18",
     "react-hook-form": "^7.52.2",
     "react-quill": "^2.0.0",

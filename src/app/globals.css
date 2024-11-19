@@ -246,3 +246,55 @@
 .react-datetimerange-picker__calendar--open{
   z-index: 30 !important;
 }
+
+.custom-date-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-family: 'Roboto', sans-serif;
+  width: 100%;
+  max-width: 400px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Text ngày được chọn */
+.custom-date-picker .selected-date {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 8px;
+}
+
+/* Nút điều hướng (previous/next) */
+.custom-date-picker button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.custom-date-picker button:hover {
+  color: #000;
+}
+
+/* Biểu tượng reset */
+.custom-date-picker .reset-icon {
+  font-size: 16px;
+  color: #999;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: color 0.2s;
+}
+
+.custom-date-picker .reset-icon:hover {
+  color: #333;
+}

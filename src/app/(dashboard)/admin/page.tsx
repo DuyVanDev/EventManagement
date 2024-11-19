@@ -38,8 +38,6 @@ const AdminPage = () => {
   const { user } = useAuth();
   return (
     <div className="p-4 flex gap-4 flex-col md:flex-row">
-      <button onClick={handleClick}>a</button>
-      <NotificationTest />
       {/* LEFT */}
       <div className="w-full lg:w-2/3 flex flex-col gap-8">
         {/* USER CARDS */}

@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import ImgMutilUploadComp from "@/utils/ImgMutilUpload";
 import { SelectFaculty } from "@/common";

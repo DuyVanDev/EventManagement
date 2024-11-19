@@ -2,6 +2,7 @@
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
 import { useState } from "react";
+import NotificationTest from "./NotificationTest";
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -24,21 +25,8 @@ const Navbar = () => {
         />
       </div>
       {/* ICONS AND USER */}
-      <div className="flex items-center gap-6 justify-end w-full relative">
-        <div className="bg-white rounded-full w-7 h-7 flex items-center justify-center cursor-pointer">
-          <Image src="/message.png" alt="message-icon" width={20} height={20} />
-        </div>
-        <div className="bg-white rounded-full w-7 h-7 flex items-center justify-center cursor-pointer relative">
-          <Image
-            src="/announcement.png"
-            alt="announcement-icon"
-            width={20}
-            height={20}
-          />
-          <div className="absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-purple-500 text-white rounded-full text-xs">
-            1
-          </div>
-        </div>
+      <div className="flex items-center gap-6 justify-end w-full">
+        {user?.RoleTmp != "admin" && <NotificationTest />}
 
         {/* Avatar và sự kiện click để xổ dropdown */}
         <div className="relative">

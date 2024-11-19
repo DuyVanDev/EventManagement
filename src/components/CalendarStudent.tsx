@@ -1,26 +1,33 @@
 "use client";
-import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
+import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "moment/locale/vi";
-import { fetchEventByTeacher } from "@/app/action/event";
 import { FormatDateJsonPro } from "@/utils";
 import Image from "next/image";
 moment.locale("vi");
 const localizer = momentLocalizer(moment);
 
 const CalendarStudent = ({ Data }: { Data: any }) => {
+  const [currentDate, setCurrentDate] = useState<Date>(new Date()); // Ngày hiện tại
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [view, setView] = useState<View>(Views.WORK_WEEK);
-  const handleOnChangeView = (selectedView: View) => {
-    setView(selectedView);
-  };
+  const [view, setView] = useState<View>(Views.WEEK);
 
   const handleSelectEvent = (event) => {
     console.log("Thông tin sự kiện:", event); // Kiểm tra object đầy đủ
     setSelectedEvent(event);
   };
+  const CustomWeekHeader = ({ date, localizer }: any) => {
+    // Chỉ hiển thị số 1 của tuần
+    const firstDay = moment(date).startOf("week"); // Lấy ngày đầu tiên của tuần
+    return (
+      <div className="text-center font-semibold text-gray-700 fixed inset-0 bg-black">
+        {firstDay.format("D")} {/* Hiển thị số 1 của tuần */}
+      </div>
+    );
+  };
+
   return (
     <>
       <Calendar
@@ -28,13 +35,20 @@ const CalendarStudent = ({ Data }: { Data: any }) => {
         events={Data}
         startAccessor="start"
         endAccessor="end"
-        views={["work_week", "day"]}
-        view={view}
-        style={{ height: "98%" }}
-        onView={handleOnChangeView}
+        step={60}
+        date={currentDate}
+        onNavigate={(date) => setCurrentDate(date)}
+        defaultView={view}
         onSelectEvent={handleSelectEvent}
-        min={new Date(2024, 1, 0, 8, 0, 0)}
-        max={new Date(2024, 1, 0, 17, 0, 0)}
+        view={view}
+        onView={(newView) => setView(newView)}
+        components={{
+          toolbar: CustomToolbar,
+          week: {
+            header: ({ date, localizer }) => localizer.format(date, 'dddd')
+          }
+        }}
+        style={{ height: "80vh" }}
       />
       {selectedEvent && (
         <div
@@ -85,7 +99,9 @@ const CalendarStudent = ({ Data }: { Data: any }) => {
                 </div>
                 <div className="flex items-center">
                   <span className="font-medium">Địa điểm: </span>
-                  <span className="ml-2 text-sky-600">{selectedEvent.locationName}</span>
+                  <span className="ml-2 text-sky-600">
+                    {selectedEvent.locationName}
+                  </span>
                 </div>
                 <div className="flex items-center">
                   <span className="font-medium">Số lượng tham gia: </span>
@@ -103,6 +119,51 @@ const CalendarStudent = ({ Data }: { Data: any }) => {
         </div>
       )}
     </>
+  );
+};
+
+const CustomToolbar = ({ label, onNavigate, onView }: any) => {
+  return (
+    <div className="flex justify-between items-center p-4 bg-gray-100 border-b">
+      {/* Nút điều hướng */}
+      <div className="flex items-center space-x-2">
+        <button
+          className="bg-blue-500 text-white px-3 py-1 rounded"
+          onClick={() => onNavigate("PREV")}
+        >
+          Trước
+        </button>
+        <span className="font-bold text-lg">{label}</span>
+        <button
+          className="bg-blue-500 text-white px-3 py-1 rounded"
+          onClick={() => onNavigate("NEXT")}
+        >
+          Tiếp
+        </button>
+      </div>
+
+      {/* Chọn chế độ xem */}
+      <div className="flex space-x-2">
+        <button
+          className="bg-green-500 text-white px-3 py-1 rounded"
+          onClick={() => onView("month")}
+        >
+          Tháng
+        </button>
+        <button
+          className="bg-green-500 text-white px-3 py-1 rounded"
+          onClick={() => onView("work_week")}
+        >
+          Tuần
+        </button>
+        <button
+          className="bg-green-500 text-white px-3 py-1 rounded"
+          onClick={() => onView("day")}
+        >
+          Ngày
+        </button>
+      </div>
+    </div>
   );
 };
 

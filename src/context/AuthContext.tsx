@@ -47,8 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       router.push(`/${userFromStorage?.RoleTmp}`);
     } else {
       // Nếu không có user trong localStorage, điều hướng đến trang đăng nhập
-      if (router.pathname !== "/sign-in") {
-        router.push("/sign-in");
+      if (router.pathname !== "/sign-in" && router.pathname != "/register" && router.pathname != "/forgotpassword") {
+        // router.push("/sign-in");
       }
     }
   }, [router]);
