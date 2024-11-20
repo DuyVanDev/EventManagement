@@ -14,7 +14,7 @@ export function middleware(req: NextRequest) {
   const role = getUserRole(req); // Lấy role của người dùng
 
   // Nếu không có role (chưa đăng nhập), điều hướng về trang /sign-in
-  if (!role && req.nextUrl.pathname != "/register" && req.nextUrl.pathname != "/forgotpassword") {
+  if (!role && req.nextUrl.pathname != "/register" && req.nextUrl.pathname != "/forgotpassword" && req.nextUrl.pathname != "/profile") {
     return NextResponse.redirect(new URL("/", req.url));
   }
 

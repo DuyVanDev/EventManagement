@@ -54,6 +54,7 @@ interface EV_spStudent_Save {
   Specialty: number;
   Password: string;
   Email: string;
+  Sex : number;
 }
 
 export const EV_spStudent_Save = async (data: EV_spStudent_Save) => {
@@ -87,3 +88,34 @@ export const EV_spCheckEmail_Exist = async (
   } catch (error) {}
 };
 
+
+interface EV_spUser_Save {
+  UserId?: any;
+  UserName: string;
+  FullName: string;
+  PhoneNumber: string;
+  Address: string;
+  BirthDay: string;
+  Specialty: number;
+  Password: string;
+  Email: string;
+  Sex: number
+}
+
+export const EV_spUser_Save = async (data: EV_spUser_Save) => {
+  try {
+    return await fetchMethod(data, "EV_spUser_Save");
+  } catch (error) {}
+};
+
+interface EV_spChangePassword_Save {
+  UserId?: any;
+  NewPassword: string;
+  CurrentPassword: string;
+}
+
+export const EV_spChangePassword_Save = async (data: EV_spChangePassword_Save) => {
+  try {
+    return await fetchMethod(data, "EV_spChangePassword_Save");
+  } catch (error) {}
+};

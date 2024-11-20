@@ -44,28 +44,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(userFromStorage);
       // Điều hướng đến trang tương ứng với vai trò của người dùng
       document.cookie = `role=${userFromStorage.RoleTmp}; path=/; max-age=86400;`;
-      router.push(`/${userFromStorage?.RoleTmp}`);
+      // router.push(`/${userFromStorage?.RoleTmp}`);
     } else {
       // Nếu không có user trong localStorage, điều hướng đến trang đăng nhập
-      if (router.pathname !== "/sign-in" && router.pathname != "/register" && router.pathname != "/forgotpassword") {
+      if (router.pathname !== "/sign-in" && router.pathname != "/register" && router.pathname != "/forgotpassword" && router.pathname != "/profile") {
         // router.push("/sign-in");
       }
     }
   }, [router]);
   // Login function
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     try {
       // Call API and get user data
       const response = await EV_spEvent_Login({
-        Username: email,
+        Username: username,
         Password: password,
       });
 
       if (response?.Status === "OK") {
         setUser(response.result[0]);
         localStorage.setItem("userEvent", JSON.stringify(response.result[0]));
-        document.cookie = `role=${response.result[0]?.RoleTmp}; path=/; max-age=86400;`;
-        window.location.href = `/${response.result[0]?.RoleTmp}`;
+        // document.cookie = `role=${response.result[0]?.RoleTmp}; path=/; max-age=86400;`;
+        // window.location.href = `/${response.result[0]?.RoleTmp}`;
         Alertsuccess("Đăng nhập thành công");
       } else {
         Alertwarning(response?.result);
