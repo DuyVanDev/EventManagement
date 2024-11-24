@@ -18,7 +18,6 @@ const NotificationTest = () => {
     fetcher
   );
 
-  console.log(Data);
 
   const [message, setMessage] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -33,7 +32,6 @@ const NotificationTest = () => {
       .build();
 
     hubConnection.on("ReceiveMessage", function (message) {
-      console.log("Received message:", message);
       setMessage(message); // Lưu message vào state
       setShowModal(true); // Hiển thị dropdown
       mutate();

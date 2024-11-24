@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
 import { useState } from "react";
 import NotificationTest from "./NotificationTest";
+import Link from "next/link";
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -16,14 +17,14 @@ const Navbar = () => {
   return (
     <div className="flex items-center justify-between p-4">
       {/* SEARCH BAR */}
-      <div className="hidden md:flex items-center gap-2 text-xs rounded-full ring-[1.5px] ring-gray-300 px-2">
+      {/* <div className="hidden md:flex items-center gap-2 text-xs rounded-full ring-[1.5px] ring-gray-300 px-2">
         <Image src="/search.png" alt="search-icon" width={14} height={14} />
         <input
           type="text"
           placeholder="Search..."
           className="w-[200px] p-2 bg-transparent outline-none"
         />
-      </div>
+      </div> */}
       {/* ICONS AND USER */}
       <div className="flex items-center gap-6 justify-end w-full">
         {user?.RoleTmp != "admin" && <NotificationTest />}
@@ -42,19 +43,24 @@ const Navbar = () => {
           {/* Dropdown menu */}
           {dropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-50">
-              <a
+              <p
+                className="block px-4 py-2 text-sm hover:bg-gray-100 border-b-2"
+              >
+                {user?.UserName}
+              </p>
+              <Link
                 href="/profile"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 Cá nhân
-              </a>
-              
-              <span
+              </Link>
+
+              <div
                 onClick={logout}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
               >
                 Đăng xuất
-              </span>
+              </div>
             </div>
           )}
         </div>

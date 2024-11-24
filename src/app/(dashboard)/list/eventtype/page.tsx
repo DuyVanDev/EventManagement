@@ -7,9 +7,8 @@ import TableSearch from "@/components/TableSearch";
 import { role } from "@/lib/data";
 import { Alertsuccess, Alertwarning } from "@/utils";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
-
 
 type Subject = {
   Id: number;
@@ -23,15 +22,28 @@ const columns = [
     header: "Tên loại sự kiện",
     accessor: "EventTypeName",
   },
- 
+
   {
     header: "Actions",
     accessor: "action",
   },
 ];
 
-const EventTypeListPage =  () => {
-  const { data: ListData, mutate } = useSWR({Id : 0}, fetcher);
+const EventTypeListPage = () => {
+  const { data: ListData, mutate } = useSWR({ Id: 0 }, fetcher);
+  console.log(ListData)
+  const [eventTypeListTmp, setEventTypeListTmp] = useState(ListData);
+  const [querySearch, setQuerySearch] = useState("");
+  useEffect(() => {
+    const newList = ListData?.filter((item) =>
+      item?.EventTypeName?.toLowerCase()?.includes(querySearch.toLowerCase())
+    );
+    setEventTypeListTmp(newList);
+    console.log(newList);
+  }, [querySearch]);
+  useEffect(() => {
+    setEventTypeListTmp(ListData);
+  }, [ListData]);
   const handleDelete = async (id: number) => {
     try {
       const result = await EV_spEventType_Delete({ Id: id });
@@ -55,8 +67,19 @@ const EventTypeListPage =  () => {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="eventtype" type="update" data={item} onActionComplete={() => mutate()} />
-              <FormModal table="eventtype" type="delete" id={item.Id} onActionComplete={() => mutate()} onActionDelete={handleDelete}/>
+              <FormModal
+                table="eventtype"
+                type="update"
+                data={item}
+                onActionComplete={() => mutate()}
+              />
+              <FormModal
+                table="eventtype"
+                type="delete"
+                id={item.Id}
+                onActionComplete={() => mutate()}
+                onActionDelete={handleDelete}
+              />
             </>
           )}
         </div>
@@ -66,13 +89,12 @@ const EventTypeListPage =  () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Set number of items per page
-  const totalPages = Math.ceil(ListData?.length / itemsPerPage);
-
+  const totalPages = Math.ceil(eventTypeListTmp?.length / itemsPerPage);
 
   // Get the data for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = Array.isArray(ListData)
-    ? ListData?.slice(startIndex, startIndex + itemsPerPage)
+  const currentData = Array.isArray(eventTypeListTmp)
+    ? eventTypeListTmp?.slice(startIndex, startIndex + itemsPerPage)
     : [];
 
   return (
@@ -83,14 +105,17 @@ const EventTypeListPage =  () => {
           Danh Sách Loại Sự Kiện
         </h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <div className="w-full md:w-auto flex items-center gap-2 text-xs rounded-full ring-[1.5px] ring-gray-300 px-2">
+            <Image src="/search.png" alt="" width={14} height={14} />
+            <input
+              type="text"
+              value={querySearch}
+              onChange={(e) => setQuerySearch(e.target.value)}
+              placeholder="Tìm kiếm..."
+              className="w-[200px] p-2 bg-transparent outline-none"
+            />
+          </div>
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/filter.png" alt="" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/sort.png" alt="" width={14} height={14} />
-            </button>
             {role === "admin" && (
               <FormModal
                 table="eventtype"

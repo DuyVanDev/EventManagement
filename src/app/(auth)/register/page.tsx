@@ -36,7 +36,6 @@ type Inputs = z.infer<typeof schema>;
 
 const RegisterPage = () => {
   const { login, user } = useAuth();
-  console.log(user);
   const {
     register,
     handleSubmit,
@@ -59,7 +58,6 @@ const RegisterPage = () => {
   });
 
   const onSubmit = handleSubmit(async (dataform) => {
-    console.log(dataform)
     try {
       const pr = {
         UserId: 0,
@@ -184,7 +182,6 @@ const RegisterPage = () => {
                   label="Khoa-viện"
                   onSelected={(selected) =>{
                     onChange(selected.value)
-                    console.log(selected)
                   }}
                   FacultyId={0}
                   isRequired={true}

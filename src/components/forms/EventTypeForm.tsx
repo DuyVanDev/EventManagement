@@ -6,7 +6,7 @@ import { z } from "zod";
 import InputField from "../InputField";
 
 import { useEffect } from "react";
-import { EV_spEvent_Save, EV_spEventType_Save } from "@/app/action/event";
+import { EV_spEventType_Save } from "@/app/action/event";
 import { fetchFacultySave } from "@/app/action/faculty";
 import { Alertsuccess, Alertwarning } from "@/utils/Notifications";
 

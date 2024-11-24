@@ -44,9 +44,9 @@ const BlogDetail = ({ params }: { params: { id: number } }) => {
     <div className="py-8 px-4 flex flex-col md:flex-row gap-8">
       {/* Main Content */}
       <div className="flex-1 md:pr-8 shadow-xl p-3">
-        <h1 className="text-3xl font-bold mb-4 text-gray-800">{Event[0]?.EventName}</h1>
+        <h1 className="text-2xl font-bold mb-4 text-gray-800">{Event[0]?.EventName}</h1>
         <div className="flex items-center text-sm text-gray-500 mb-6 gap-2">
-          <span>Đăng bởi: Admin</span>
+          <span className="text-sky-500 font-semibold">Đăng bởi: {Event[0]?.CreaterName}</span>
           <span className="mx-2">|</span>
           <span>Ngày bắt đầu: {FormatDateJsonPro(Event[0]?.StartTime, 7)}</span>
           {!Event[0]?.IsRegister && Event[0]?.IsRegister !== 0 && (

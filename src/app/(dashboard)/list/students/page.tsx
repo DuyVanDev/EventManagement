@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { EV_spStudent_List } from "@/app/action/user";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
@@ -7,7 +7,7 @@ import TableSearch from "@/components/TableSearch";
 import { role, studentsData } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 const fetcher = (params: object) => EV_spStudent_List(params);
@@ -23,44 +23,64 @@ type Student = {
 };
 const columns = [
   {
-    header: "Info",
+    header: "Avatar",
     accessor: "info",
   },
   {
-    header: "Teacher ID",
+    header: "Tên sinh viên",
     accessor: "teacherId",
     className: "hidden md:table-cell",
   },
   {
-    header: "Subjects",
+    header: "Khoa/Viện",
     accessor: "FacultyName",
     className: "hidden md:table-cell",
   },
   {
-    header: "Phone",
+    header: "Số điện thoại",
     accessor: "PhoneNumber",
     className: "hidden lg:table-cell",
   },
   {
-    header: "Address",
+    header: "Địa chỉ",
     accessor: "Address",
     className: "hidden lg:table-cell",
   },
   {
-    header: "Actions",
+    header: "Email",
+    accessor: "Email",
+    className: "hidden lg:table-cell",
+  },
+  {
+    header: "",
     accessor: "action",
   },
 ];
 
 const StudentListPage = () => {
   const { data: studentList, mutate } = useSWR({ Id: 0 }, fetcher);
+  const [studentListTmp, setStudentListTmp] = useState(studentList);
+  useEffect(() => {
+    setStudentListTmp(studentList);
+  }, [studentList]);
+  const [querySearch, setQuerySearch] = useState("");
+  useEffect(() => {
+    const newList = studentList?.filter((item) =>
+      item?.FullName?.toLowerCase()?.includes(querySearch.toLowerCase())
+    );
+    setStudentListTmp(newList);
+    console.log(newList);
+  }, [querySearch]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Set number of items per page
-  const totalPages = Math.ceil(studentList?.length / itemsPerPage);
+  const totalPages = Math.ceil(studentListTmp?.length / itemsPerPage);
 
   // Get the data for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = studentList?.slice(startIndex, startIndex + itemsPerPage);
+  const currentData =
+    Array.isArray(studentListTmp) &&
+    studentListTmp?.slice(startIndex, startIndex + itemsPerPage);
   const renderRow = (item: Student) => (
     <tr
       key={item.UserId}
@@ -77,15 +97,12 @@ const StudentListPage = () => {
           height={40}
           className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
         />
-        <div className="flex flex-col">
-          <h3 className="font-semibold">{item.FullName}</h3>
-          <p className="text-xs text-gray-500">{item?.Email}</p>
-        </div>
       </td>
-      <td className="hidden md:table-cell">{item.UserId}</td>
+      <td className="hidden md:table-cell">{item.FullName}</td>
       <td className="hidden md:table-cell">{item.FacultyName}</td>
       <td className="hidden md:table-cell">{item.PhoneNumber}</td>
       <td className="hidden md:table-cell">{item.Address}</td>
+      <td className="hidden md:table-cell">{item?.Email}</td>
       <td>
         <div className="flex items-center gap-2">
           <Link href={`/list/teachers/${item.UserId}`}>
@@ -110,14 +127,17 @@ const StudentListPage = () => {
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">Giảng viên</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <div className="w-full md:w-auto flex items-center gap-2 text-xs rounded-full ring-[1.5px] ring-gray-300 px-2">
+            <Image src="/search.png" alt="" width={14} height={14} />
+            <input
+              type="text"
+              value={querySearch}
+              onChange={(e) => setQuerySearch(e.target.value)}
+              placeholder="Tìm kiếm..."
+              className="w-[200px] p-2 bg-transparent outline-none"
+            />
+          </div>
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/filter.png" alt="" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/sort.png" alt="" width={14} height={14} />
-            </button>
             {role === "admin" && (
               // <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               //   <Image src="/plus.png" alt="" width={14} height={14} />
@@ -132,7 +152,7 @@ const StudentListPage = () => {
                   PhoneNumber: "",
                   Address: "",
                   BirthDay: new Date(),
-                  Avatar : ""
+                  Avatar: "",
                 }}
               />
             )}
@@ -143,9 +163,11 @@ const StudentListPage = () => {
       {/* <Table columns={columns} renderRow={renderRow} data={teachersData} /> */}
       <Table columns={columns} renderRow={renderRow} data={currentData} />
       {/* PAGINATION */}
-      <Pagination currentPage={currentPage}
+      <Pagination
+        currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={setCurrentPage} />
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

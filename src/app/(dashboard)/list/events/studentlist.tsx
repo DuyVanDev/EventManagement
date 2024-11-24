@@ -17,7 +17,6 @@ const StudentList = ({
   onClose: () => void;
   eventId: number;
 }) => {
-  console.log(eventId);
   const columns = [
     {
       header: "Tên sinh viên",

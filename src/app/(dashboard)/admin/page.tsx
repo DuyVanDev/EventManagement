@@ -13,10 +13,8 @@ const fetcher = (params: object) => EV_spUserRoleAndGenderCount(params);
 
 const AdminPage = () => {
   const { data: Data, mutate } = useSWR({ EventId: "0" }, fetcher);
-  console.log(Data);
 
   const handleClick = async () => {
-    debugger
     try {
       const data = {
         NotificationId: 0,

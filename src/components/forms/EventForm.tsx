@@ -19,6 +19,7 @@ import { FormatDateJsonPro } from "@/utils/FormatDateJson";
 import ImgMutilUploadComp from "@/utils/ImgMutilUpload";
 import { CallUploadImage } from "@/utils/CallUploadImage";
 import { sendNotification } from "@/app/action/sendnotify";
+import { useAuth } from "@/context/AuthContext";
 
 const schema = z.object({
   EventId: z.number(),
@@ -71,7 +72,7 @@ const EventForm = ({
   //#region  thumnail
   const [imagesThumnail, setImagesThumnail] = useState(data?.Thumnail);
   const [uploadedThumnail, setUploadedThumnail] = useState([]);
-
+  const {user} = useAuth()
   const [flag, setFlag] = useState(0); // flag để reset hoặc xử lý khác
   const [isReset, setIsReset] = useState(0); // kiểm soát việc reset form upload
   const [isMutil, setIsMutil] = useState(false); // cho phép upload nhiều ảnh
@@ -118,7 +119,6 @@ const EventForm = ({
   };
 
   const onSubmit = handleSubmit(async (dataform) => {
-    debugger;
     try {
       let _newThumnail = "";
       if (uploadedThumnail.length > 0 && Array.isArray(uploadedThumnail)) {
@@ -129,7 +129,6 @@ const EventForm = ({
           Array.isArray(uploadedThumnail)
         ) {
           listimage = await CallUploadImage(uploadedThumnail);
-          console.log(listimage);
         }
         _newThumnail = listimage[0]?.url;
       } else if (
@@ -176,6 +175,7 @@ const EventForm = ({
         ParticipantLimit: dataform?.ParticipantLimit,
         Thumnail: _newThumnail,
         ListImage: _newListImage,
+        Creater : user?.UserId
       };
       const result = await EV_spEvent_Save(pr);
       if (result.Status == "OK") {
@@ -200,7 +200,6 @@ const EventForm = ({
         <InputField
           label="Tên sự kiện"
           name="EventName"
-          defaultValue={data?.EventName}
           register={register}
           error={errors?.EventName}
         />
@@ -267,7 +266,6 @@ const EventForm = ({
         <InputField
           label="Số lượng"
           type="number"
-          defaultValue={data?.ParticipantLimit}
           name="ParticipantLimit"
           register={register}
           error={errors.ParticipantLimit}

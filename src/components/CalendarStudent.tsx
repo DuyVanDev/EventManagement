@@ -18,15 +18,6 @@ const CalendarStudent = ({ Data }: { Data: any }) => {
     console.log("Thông tin sự kiện:", event); // Kiểm tra object đầy đủ
     setSelectedEvent(event);
   };
-  const CustomWeekHeader = ({ date, localizer }: any) => {
-    // Chỉ hiển thị số 1 của tuần
-    const firstDay = moment(date).startOf("week"); // Lấy ngày đầu tiên của tuần
-    return (
-      <div className="text-center font-semibold text-gray-700 fixed inset-0 bg-black">
-        {firstDay.format("D")} {/* Hiển thị số 1 của tuần */}
-      </div>
-    );
-  };
 
   return (
     <>
@@ -41,7 +32,10 @@ const CalendarStudent = ({ Data }: { Data: any }) => {
         defaultView={view}
         onSelectEvent={handleSelectEvent}
         view={view}
-        onView={(newView) => setView(newView)}
+        onView={(newView) =>{
+          console.log(newView)
+          setView(newView)
+        }}
         components={{
           toolbar: CustomToolbar,
           week: {
@@ -152,7 +146,7 @@ const CustomToolbar = ({ label, onNavigate, onView }: any) => {
         </button>
         <button
           className="bg-green-500 text-white px-3 py-1 rounded"
-          onClick={() => onView("work_week")}
+          onClick={() => onView("week")}
         >
           Tuần
         </button>

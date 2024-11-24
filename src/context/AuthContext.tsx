@@ -1,5 +1,6 @@
 'use client'
 import { EV_spEvent_Login } from "@/app/action/user";
+import { routeAccessMap } from "@/lib/settings";
 import { Alertsuccess, Alertwarning } from "@/utils/Notifications";
 import { useRouter } from "next/navigation";
 import { createContext, useState, useContext, ReactNode, useEffect } from "react";
@@ -42,14 +43,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (storedUser) {
       const userFromStorage = JSON.parse(storedUser);
       setUser(userFromStorage);
-      // Điều hướng đến trang tương ứng với vai trò của người dùng
-      document.cookie = `role=${userFromStorage.RoleTmp}; path=/; max-age=86400;`;
-      // router.push(`/${userFromStorage?.RoleTmp}`);
-    } else {
-      // Nếu không có user trong localStorage, điều hướng đến trang đăng nhập
-      if (router.pathname !== "/sign-in" && router.pathname != "/register" && router.pathname != "/forgotpassword" && router.pathname != "/profile") {
-        // router.push("/sign-in");
+  
+      const role = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("role="))
+        ?.split("=")[1];
+  
+      if (role) {
+        const allowedPaths = Object.entries(routeAccessMap)
+          .filter(([, allowedRoles]) => allowedRoles.includes(role))
+          .map(([path]) => new RegExp(`^${path}$`));
+  
+        const currentPath = window.location.pathname;
+  
+        // Kiểm tra nếu currentPath không nằm trong danh sách allowedPaths
+        const isPathAllowed = allowedPaths.some((regex) => regex.test(currentPath));
+  
+        if (isPathAllowed) {
+          router.push(`${currentPath}`); // Điều hướng về trang chính của role nếu không hợp lệ
+        }
+        else {
+          router.push(`/${role}`); 
+        }
       }
+    } else {
+      router.push("/sign-in");
     }
   }, [router]);
   // Login function
@@ -64,8 +82,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (response?.Status === "OK") {
         setUser(response.result[0]);
         localStorage.setItem("userEvent", JSON.stringify(response.result[0]));
-        // document.cookie = `role=${response.result[0]?.RoleTmp}; path=/; max-age=86400;`;
-        // window.location.href = `/${response.result[0]?.RoleTmp}`;
+        document.cookie = `role=${response.result[0]?.RoleTmp}; path=/; max-age=86400;`;
+        window.location.href = `/${response.result[0]?.RoleTmp}`;
         Alertsuccess("Đăng nhập thành công");
       } else {
         Alertwarning(response?.result);

@@ -14,6 +14,7 @@ interface ImgMutilUploadProps {
   isMutil?: boolean;
   readOnly?: boolean;
   label?: string;
+  className?:string;
 }
 
 const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
@@ -25,6 +26,7 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
   isMutil = false,
   readOnly = false,
   label = "Tải hình ảnh",
+  className=""
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -123,7 +125,7 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
 
   return (
     <>
-      <div className="form-group">
+      <div className={`form-group ${className}`}>
         {!readOnly && (
           <>
             <label className="image-collapse-label2 flex items-center gap-2 w-full cursor-pointer">

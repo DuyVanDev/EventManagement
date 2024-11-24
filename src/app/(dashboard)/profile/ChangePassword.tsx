@@ -44,7 +44,6 @@ const ChangePassword = () => {
   });
 
   const onSubmit = handleSubmit(async (dataform) => {
-    debugger;
     try {
       const pr = {
         UserId: user?.UserId,

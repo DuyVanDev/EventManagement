@@ -20,16 +20,16 @@ export function middleware(req: NextRequest) {
 
   // Nếu người dùng đã đăng nhập và truy cập vào /sign-in, điều hướng về trang phù hợp với role
   if (role && (req.nextUrl.pathname === "/" || req.nextUrl.pathname === "/sign-in")) {
-    // return NextResponse.redirect(new URL(`/${role}`, req.url));
+    return NextResponse.redirect(new URL(`/${role}`, req.url));
   }
 
   // Kiểm tra quyền truy cập dựa trên routeAccessMap
   for (const [route, allowedRoles] of Object.entries(routeAccessMap)) {
     const regex = new RegExp(`^${route}$`); // Tạo regex từ route pattern
-
+    console.log(regex)
     if (regex.test(req.nextUrl.pathname)) {
-      // Nếu role không nằm trong allowedRoles, điều hướng về trang tương ứng với role
       if (!allowedRoles.includes(role)) {
+        console.log(`Role "${role}" không có quyền truy cập route "${req.nextUrl.pathname}"`);
         return NextResponse.redirect(new URL(`/${role}`, req.url));
       }
     }
@@ -48,7 +48,7 @@ export const config = {
     "/teacher(.*)", 
     "/parent(.*)", 
     "/list/(.*)", 
-    "/sign-in", // Đảm bảo middleware cũng chạy trên trang /sign-in
-    "/register", // Đảm bảo middleware cũng chạy trên trang /sign-in
+    "/sign-in", 
+    "/myevent(.*)",
   ],
 };

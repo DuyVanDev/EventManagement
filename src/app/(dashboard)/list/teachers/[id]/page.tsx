@@ -16,7 +16,6 @@ const SingleTeacherPage = async ({
 
   const { id } = params;
   const teacher = await fetchTeacher({Id : id})
-  console.log(id)
   return (
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
       {/* LEFT */}

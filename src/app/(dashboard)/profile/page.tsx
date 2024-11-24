@@ -15,6 +15,8 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import ChangePassword from "./ChangePassword";
+import ImgMutilUploadComp from "@/utils/ImgMutilUpload";
+import { CallUploadImage } from "@/utils/CallUploadImage";
 
 const schema = z.object({
   UserId: z.any(),
@@ -54,6 +56,8 @@ const Profile = () => {
       Avatar: user?.Avatar,
     },
   });
+  const [imageData, setImageData] = useState(user?.Avatar); // Dữ liệu ảnh dạng string từ server hoặc xử lý khác
+
   useEffect(() => {
     if (user) {
       setValue("UserId", user.UserId);
@@ -65,15 +69,47 @@ const Profile = () => {
       setValue("Specialty", user.Specialty);
       setValue("Sex", user.Sex);
       setValue("Avatar", user.Avatar);
+      setImageData(user?.Avatar);
     }
   }, [user, setValue]);
 
   const [activeTab, setActiveTab] = useState("info");
-
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    const files1= Array.from(event.target.files);
+    setUploadedImages(files1);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Image = reader.result;
+        setImageData(base64Image); // Cập nhật ảnh mới
+      };
+      reader.readAsDataURL(file); // Đọc file dưới dạng base64
+    }
+  };
   const onSubmit = handleSubmit(async (dataform) => {
-    debugger;
-    console.log(dataform);
     try {
+      let _newThumnail = "";
+      if (uploadedImages.length > 0 && Array.isArray(uploadedImages)) {
+        let listimage = "";
+        if (
+          uploadedImages !== "" &&
+          uploadedImages.length > 0 &&
+          Array.isArray(uploadedImages)
+        ) {
+          listimage = await CallUploadImage(uploadedImages);
+        }
+        _newThumnail = listimage[0]?.url;
+      } else if (
+        typeof uploadedImages === "string" ||
+        uploadedImages.length === 0
+      ) {
+        _newThumnail = user?.Avatar;
+      } else if (!_newThumnail) {
+        Alerterror("File error");
+        return;
+      }
       const pr = {
         UserId: dataform?.UserId,
         FullName: dataform?.FullName,
@@ -83,7 +119,7 @@ const Profile = () => {
         BirthDay: dataform?.BirthDay,
         Specialty: dataform?.Specialty,
         Sex: dataform?.Sex,
-        Avatar: dataform?.Avatar,
+        Avatar: _newThumnail,
       };
       const result = await EV_spUser_Save(pr);
       if (result?.Status == "OK") {
@@ -97,6 +133,19 @@ const Profile = () => {
       console.log(err);
     }
   });
+
+  // const handleImageUpload = (e) => {
+  //   debugger
+  //   const files = Array.from(e.target.files);
+  //   setUploadedImages(files[0].name);
+  //   // images là danh sách file hình ảnh từ input
+  // };
+
+  
+
+  const triggerFileInput = () => {
+    document.getElementById("fileInput").click();
+  };
 
   return (
     <div className="flex justify-center items-center ">
@@ -133,13 +182,22 @@ const Profile = () => {
                 control={control}
                 render={({ field }) => (
                   <>
-                    {console.log("a", field)}
                     <Image
-                      src={field.value || "/upload.png"}
+                      src={imageData || "/upload.png"}
                       alt="Avatar"
-                        className="w-24 h-24 rounded-full border-2 border-indigo-500 shadow-md"
+                      className="w-24 h-24 rounded-full border-2 border-indigo-500 shadow-md"
                       width={96}
                       height={96}
+                    />
+                    <input
+                      id="fileInput"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        handleImageUpload(e);
+                        field.onChange(e.target.files[0]); // Liên kết giá trị với react-hook-form
+                      }}
                     />
                   </>
                 )}
@@ -147,6 +205,7 @@ const Profile = () => {
 
               <button
                 type="button"
+                onClick={triggerFileInput}
                 className="mt-3 text-indigo-600 hover:underline text-sm"
               >
                 Đổi hình đại diện
@@ -204,7 +263,6 @@ const Profile = () => {
                     label="Khoa-viện"
                     onSelected={(selected) => {
                       onChange(selected.value);
-                      console.log(selected);
                     }}
                     FacultyId={Number(value)}
                     isRequired={true}
@@ -230,7 +288,7 @@ const Profile = () => {
 
               <div>
                 <label className="text-xs text-gray-500">Giới tính</label>
-                <div className="mt-2 flex items-center gap-2">
+                <div className="mt-2 flex items-center gap-4">
                   <div className="flex items-center">
                     <Controller
                       name="Sex"
@@ -241,8 +299,8 @@ const Profile = () => {
                             id="male"
                             type="radio"
                             value={1}
-                            {...field}
-                            checked={field.value == 1}
+                            checked={field.value === 1}
+                            onChange={() => field.onChange(1)} // Cập nhật giá trị `1`
                             className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                           />
                           <label
@@ -262,13 +320,12 @@ const Profile = () => {
                       control={control}
                       render={({ field }) => (
                         <>
-                          {console.log("fsaa", field)}
                           <input
                             id="female"
                             type="radio"
                             value={2}
-                            {...field}
-                            checked={field.value == 2}
+                            checked={field.value === 2}
+                            onChange={() => field.onChange(2)} // Cập nhật giá trị `2`
                             className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                           />
                           <label

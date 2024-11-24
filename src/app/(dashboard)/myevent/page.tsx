@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 const transformApiData = (event) => {
-  console.log(event);
   const [startDate, startTime] = event.StartTime.split(" ");
   const [startDay, startMonth, startYear] = startDate.split("/");
   const [startHour, startMinute] = startTime.split(":");
@@ -62,7 +61,8 @@ const StudentPage = () => {
     setLstData(transformedEvents);
   }, [ListDataRegisted]);
 
-  console.log(ListDataRegisted);
+  console.log(LstData);
+
   return (
     <div className="h-full">
       <div className="container mx-auto p-4 h-full">
@@ -76,32 +76,41 @@ const StudentPage = () => {
           </div>
           {/* Sidebar */}
           <div className="w-1/3 shadow-lg p-3">
-            {ListDataRegisted?.map((article, index) => (
-              <Link href={`/blog/${article?.EventId}`} className="flex">
-                <div className="w-1/5">
-                  <Image
-                    src={article.Thumnail}
-                    alt="Article"
-                    className="rounded-md"
-                    width={80}
-                    height={80}
-                  />
-                </div>
-                <div className="flex flex-col h-full  gap-2 w-4/5">
-                  <h2 className="text-base font-semibold ">
-                    {article.EventName}
-                  </h2>
-
-                  <div className="flex items-center text-gray-600">
-                    {/* <span className="bg-gray-200 px-2 py-1 rounded-full text-sm mr-2">{article.category}</span> */}
-                    <div className="text-sm mr-2">
-                      Ngày tổ chức: {article?.StartTime}
-                    </div>
-                    {/* {article.selectedForYou && <span className="text-sm mr-2">· Selected for you</span>} */}
+            <p className="text-lg  font-semibold p-2">
+              Sự kiện đã đăng ký
+            </p>
+            {ListDataRegisted?.length > 0 ? (
+              ListDataRegisted?.map((article, index) => (
+                <Link href={`/blog/${article?.EventId}`} className="flex">
+                  <div className="w-1/5">
+                    <Image
+                      src={article.Thumnail}
+                      alt="Article"
+                      className="rounded-md"
+                      width={80}
+                      height={80}
+                    />
                   </div>
-                </div>
-              </Link>
-            ))}
+                  <div className="flex flex-col h-full  gap-2 w-4/5">
+                    <h2 className="text-base font-semibold ">
+                      {article.EventName}
+                    </h2>
+
+                    <div className="flex items-center text-gray-600">
+                      {/* <span className="bg-gray-200 px-2 py-1 rounded-full text-sm mr-2">{article.category}</span> */}
+                      <div className="text-sm mr-2">
+                        Ngày tổ chức: {article?.StartTime}
+                      </div>
+                      {/* {article.selectedForYou && <span className="text-sm mr-2">· Selected for you</span>} */}
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="text-center text-sky-500 pt-4">
+                Không có sự kiện đã đăng ký
+              </div>
+            )}
           </div>
         </div>
       </div>

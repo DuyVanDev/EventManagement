@@ -5,7 +5,6 @@ import Link from "next/link";
 
 const Menu = () => {
   const { login,user } = useAuth();
-  console.log(user)
   const menuItems = [
     {
       title: "LỐI TẮT",
@@ -20,19 +19,19 @@ const Menu = () => {
           icon: "/teacher.png",
           label: "Giảng Viên",
           href: "/list/teachers",
-          visible: ["admin", "teacher"],
+          visible: ["admin"],
         },
         {
           icon: "/student.png",
           label: "Sinh Viên",
           href: "/list/students",
-          visible: ["admin", "teacher"],
+          visible: ["admin"],
         },
         {
           icon: "/parent.png",
           label: "Địa điểm",
           href: "/list/location",
-          visible: ["admin", "teacher"],
+          visible: ["admin"],
         },
         {
           icon: "/subject.png",

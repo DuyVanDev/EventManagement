@@ -11,7 +11,7 @@ import { eventsData, role } from "@/lib/data";
 import { Alertsuccess, Alertwarning } from "@/utils";
 import { FormatDateJsonPro } from "@/utils/FormatDateJson";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useSWR from "swr";
 import StudentList from "./studentlist";
@@ -101,9 +101,14 @@ const columns = [
 
 const EventListPage = () => {
   const { data: EventList, mutate } = useSWR({ EventId: 0 }, fetcher);
-  console.log(EventList);
+  const [EventListTmp, setEventListTmp] = useState(EventList);
+  useEffect(() => {
+    setEventListTmp(EventList)
+  },[EventList])
+
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isShowListStudent, setIsShowListStudent] = useState(false);
+  const [querySearch, setQuerySearch] = useState("");
   const handleShowListStudent = () => {
     setIsShowListStudent(true);
   };
@@ -132,14 +137,22 @@ const EventListPage = () => {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    const newList = EventList?.filter((item) =>
+      item?.EventName.toLowerCase()?.includes(querySearch.toLowerCase())
+    );
+    setEventListTmp(newList);
+    console.log(newList);
+  }, [querySearch]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Set number of items per page
-  const totalPages = Math.ceil(EventList?.length / itemsPerPage);
+  const totalPages = Math.ceil(EventListTmp?.length / itemsPerPage);
 
   // Get the data for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = Array.isArray(EventList)
-    ? EventList?.slice(startIndex, startIndex + itemsPerPage)
+  const currentData = Array.isArray(EventListTmp)
+    ? EventListTmp?.slice(startIndex, startIndex + itemsPerPage)
     : [];
 
   const renderRow = (item: Event) => {
@@ -230,14 +243,17 @@ const EventListPage = () => {
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">Sự kiện</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <div className="w-full md:w-auto flex items-center gap-2 text-xs rounded-full ring-[1.5px] ring-gray-300 px-2">
+            <Image src="/search.png" alt="" width={14} height={14} />
+            <input
+              type="text"
+              value={querySearch}
+              onChange={(e) => setQuerySearch(e.target.value)}
+              placeholder="Tìm kiếm..."
+              className="w-[200px] p-2 bg-transparent outline-none"
+            />
+          </div>
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/filter.png" alt="" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/sort.png" alt="" width={14} height={14} />
-            </button>
             {role === "admin" && (
               <FormModal
                 table="event"

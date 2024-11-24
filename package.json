@@ -28,6 +28,7 @@
     "react-datepicker": "^7.5.0",
     "react-dom": "^18",
     "react-hook-form": "^7.52.2",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-quill": "^2.0.0",
     "react-select": "^5.8.1",
     "react-toastify": "^10.0.5",

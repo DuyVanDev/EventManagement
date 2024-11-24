@@ -12,6 +12,7 @@ interface Event {
   LectureId : string;
   EventTypeId : number;
   ParticipantLimit : number;
+  Creater : number;
 }
 
 export const EV_spEvent_Save = async (data: Event) => {
@@ -50,6 +51,7 @@ interface EventList {
   LectureId? : number;
   EventTypeId? : number;
   UserId? :number;
+  EventTypeIds?:any;
 }
 
 export const fetchEventList = async (data: EventList) => {
