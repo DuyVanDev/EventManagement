@@ -7,6 +7,7 @@ import TableSearch from "@/components/TableSearch";
 import { role, subjectsData } from "@/lib/data";
 import { Alertsuccess, Alertwarning } from "@/utils";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 type Subject = {
   FacultyId: number;
@@ -19,7 +20,7 @@ const columns = [
     accessor: "FacultyName",
   },
   {
-    header: "Actions",
+    header: "",
     accessor: "action",
   },
 ];
@@ -28,6 +29,28 @@ const fetcher = (params: object) => fetchFacultyList(params);
 
 const FacultyListPage = () => {
   const { data: ListData, mutate } = useSWR({ FacultyId: "0" }, fetcher);
+
+  const [facultyTmp, seTfacultyTmp] = useState(ListData);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Set number of items per page
+  const totalPages = Math.ceil(facultyTmp?.length / itemsPerPage);
+
+  // Get the data for the current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const [querySearch, setQuerySearch] = useState("");
+
+  const currentData =
+    Array.isArray(facultyTmp) &&
+    facultyTmp?.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    const newList =
+      Array.isArray(ListData) &&
+      ListData?.filter((item) =>
+        item?.FacultyName?.toLowerCase()?.includes(querySearch.toLowerCase())
+      );
+    seTfacultyTmp(newList);
+  }, [querySearch]);
   const handleDelete = async (facultyId: number) => {
     try {
       const result = await EV_spFaculty_Delete({ FacultyId: facultyId });
@@ -79,14 +102,17 @@ const FacultyListPage = () => {
           Danh Sách Khoa - Viện
         </h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <div className="w-full md:w-auto flex items-center gap-2 text-xs rounded-full ring-[1.5px] ring-gray-300 px-2">
+            <Image src="/search.png" alt="" width={14} height={14} />
+            <input
+              type="text"
+              value={querySearch}
+              onChange={(e) => setQuerySearch(e.target.value)}
+              placeholder="Tìm kiếm..."
+              className="w-[200px] p-2 bg-transparent outline-none"
+            />
+          </div>
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/filter.png" alt="" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/sort.png" alt="" width={14} height={14} />
-            </button>
             {role === "admin" && (
               <FormModal
                 table="faculty"
@@ -102,9 +128,13 @@ const FacultyListPage = () => {
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={ListData} />
+      <Table columns={columns} renderRow={renderRow} data={currentData} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

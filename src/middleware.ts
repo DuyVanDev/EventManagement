@@ -26,10 +26,8 @@ export function middleware(req: NextRequest) {
   // Kiểm tra quyền truy cập dựa trên routeAccessMap
   for (const [route, allowedRoles] of Object.entries(routeAccessMap)) {
     const regex = new RegExp(`^${route}$`); // Tạo regex từ route pattern
-    console.log(regex)
     if (regex.test(req.nextUrl.pathname)) {
       if (!allowedRoles.includes(role)) {
-        console.log(`Role "${role}" không có quyền truy cập route "${req.nextUrl.pathname}"`);
         return NextResponse.redirect(new URL(`/${role}`, req.url));
       }
     }

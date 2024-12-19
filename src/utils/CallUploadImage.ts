@@ -22,8 +22,6 @@ export const CallUploadImage = async (files: File[]): Promise<any[]> => {
             // Sau khi upload thành công, đẩy kết quả vào mảng uploadedImages
             uploadedImages.push(response.data); // Chỉ lấy response.data nếu bạn chỉ cần dữ liệu ảnh từ server
         }
-
-        alert("Upload ảnh thành công!");
         return uploadedImages; // Trả về danh sách các kết quả sau khi upload thành công
     } catch (error) {
         console.error("Lỗi khi upload ảnh:", error);

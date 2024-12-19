@@ -35,7 +35,7 @@ const SelectDateTimeRangePickerComp = React.forwardRef((
 
   return (
     <div className="relative" ref={ref}>
-      <label className="">
+      <label className="text-xs text-gray-500">
         {label}
         {isRequired && (
           <span className="text-red-500 ml-1">(*)</span>
@@ -50,5 +50,7 @@ const SelectDateTimeRangePickerComp = React.forwardRef((
     </div>
   );
 });
+
+SelectDateTimeRangePickerComp.displayName = 'SelectDateTimeRangePickerComp';
 
 export const SelectDateTimeRangePicker = React.memo(SelectDateTimeRangePickerComp);

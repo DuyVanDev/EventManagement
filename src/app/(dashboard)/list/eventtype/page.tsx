@@ -31,7 +31,6 @@ const columns = [
 
 const EventTypeListPage = () => {
   const { data: ListData, mutate } = useSWR({ Id: 0 }, fetcher);
-  console.log(ListData)
   const [eventTypeListTmp, setEventTypeListTmp] = useState(ListData);
   const [querySearch, setQuerySearch] = useState("");
   useEffect(() => {
@@ -39,7 +38,6 @@ const EventTypeListPage = () => {
       item?.EventTypeName?.toLowerCase()?.includes(querySearch.toLowerCase())
     );
     setEventTypeListTmp(newList);
-    console.log(newList);
   }, [querySearch]);
   useEffect(() => {
     setEventTypeListTmp(ListData);

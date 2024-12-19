@@ -125,10 +125,10 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
 
   return (
     <>
-      <div className={`form-group ${className}`}>
+      <div className={`form-group ${className} mt-6`}>
         {!readOnly && (
           <>
-            <label className="image-collapse-label2 flex items-center gap-2 w-full cursor-pointer">
+            <label className="image-collapse-label2 flex items-center gap-2 w-full cursor-pointer border-2 !border-dotted p-2">
               <input
                 type="file"
                 className="image-collapse-file cursor-pointer hidden"
@@ -148,9 +148,11 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
         <div className="grid grid-cols-4 gap-2">
           {ImageUpload.map((file, ix) => (
             <div className="shadow-lg relative rounded-sm p-2" key={ix}>
-              <img
+              <Image
                 src={URL.createObjectURL(file)}
                 alt=""
+                width={200}
+                height={150}
                 className="w-[200px] max-h-[150px] object-contain"
               />
               <i
@@ -170,9 +172,11 @@ const ImgMutilUploadComp: React.FC<ImgMutilUploadProps> = ({
           {i.length > 0 &&
             i.map((item, ix) => (
               <div className="shadow-lg relative rounded-sm" key={ix}>
-                <img
+                <Image
                   src={item}
-                  alt=""
+                  alt="image"
+                  width={200} 
+                  height={150}
                   className="w-[200px] max-h-[150px] object-contain"
                 />
                 {!readOnly && (

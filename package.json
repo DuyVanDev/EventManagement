@@ -20,6 +20,7 @@
     "@types/react-big-calendar": "^1.8.9",
     "@wojtekmaj/react-datetimerange-picker": "^6.0.0",
     "axios": "^1.7.7",
+    "file-saver": "^2.0.5",
     "moment": "^2.30.1",
     "next": "14.2.5",
     "react": "^18",
@@ -33,6 +34,7 @@
     "react-select": "^5.8.1",
     "react-toastify": "^10.0.5",
     "recharts": "^2.12.7",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {

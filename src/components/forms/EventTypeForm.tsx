@@ -5,9 +5,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { EV_spEventType_Save } from "@/app/action/event";
-import { fetchFacultySave } from "@/app/action/faculty";
 import { Alertsuccess, Alertwarning } from "@/utils/Notifications";
 
 const schema = z.object({
@@ -42,6 +41,7 @@ const EventTypeForm = ({
       EventTypeName: data.EventTypeName,
     },
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -50,6 +50,7 @@ const EventTypeForm = ({
     }
   }, [data, setValue]);
   const onSubmit = handleSubmit(async (dataform) => {
+    setIsLoading(true);
     try {
       const pr = {
         Id: dataform?.Id,
@@ -59,12 +60,16 @@ const EventTypeForm = ({
       if (result.Status == "OK") {
         Alertsuccess(result.ReturnMess);
         setOpen(false);
-        onActionComplete(); 
+        onActionComplete();
+        setIsLoading(false);
       } else {
         Alertwarning(result.ReturnMess);
+        setIsLoading(false);
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsLoading(false);
     }
   });
 
@@ -76,13 +81,43 @@ const EventTypeForm = ({
         <InputField
           label="Tên loại sự kiện"
           name="EventTypeName"
-          defaultValue={data?.EventTypeName}
           register={register}
           error={errors?.EventTypeName}
         />
       </div>
-      <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Tạo" : "Sửa"}
+      <button
+        className={`bg-sky-600 text-white px-4 py-2 rounded flex items-center justify-center gap-2 ${
+          isLoading ? "cursor-not-allowed opacity-75" : ""
+        }`}
+        type="submit"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <svg
+            className="animate-spin h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v8H4z"
+            ></path>
+          </svg>
+        ) : type === "create" ? (
+          "Tạo"
+        ) : (
+          "Sửa"
+        )}
       </button>
     </form>
   );

@@ -1,9 +1,5 @@
 "use client";
-import {
-  EV_spEvent_Login,
-  EV_spStudent_Save,
-  EV_spUser_Save,
-} from "@/app/action/user";
+import { EV_spUser_Save } from "@/app/action/user";
 import { SelectFaculty } from "@/common";
 import InputField from "@/components/InputField";
 import { useAuth } from "@/context/AuthContext";
@@ -15,7 +11,6 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import ChangePassword from "./ChangePassword";
-import ImgMutilUploadComp from "@/utils/ImgMutilUpload";
 import { CallUploadImage } from "@/utils/CallUploadImage";
 
 const schema = z.object({
@@ -36,6 +31,7 @@ type Inputs = z.infer<typeof schema>;
 
 const Profile = () => {
   const { login, user } = useAuth();
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -77,7 +73,7 @@ const Profile = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
-    const files1= Array.from(event.target.files);
+    const files1 = Array.from(event.target.files);
     setUploadedImages(files1);
     if (file) {
       const reader = new FileReader();
@@ -89,6 +85,7 @@ const Profile = () => {
     }
   };
   const onSubmit = handleSubmit(async (dataform) => {
+    setLoading(true);
     try {
       let _newThumnail = "";
       if (uploadedImages.length > 0 && Array.isArray(uploadedImages)) {
@@ -108,6 +105,7 @@ const Profile = () => {
         _newThumnail = user?.Avatar;
       } else if (!_newThumnail) {
         Alerterror("File error");
+        setLoading(false);
         return;
       }
       const pr = {
@@ -122,33 +120,29 @@ const Profile = () => {
         Avatar: _newThumnail,
       };
       const result = await EV_spUser_Save(pr);
+      console.log(result);
       if (result?.Status == "OK") {
-        await login(result?.user?.UserName, result?.user?.Password);
+        localStorage.setItem("userEvent", JSON.stringify(result?.user));
 
         Alertsuccess(result?.ReturnMess);
+        setLoading(false);
       } else {
         Alerterror(result?.ReturnMess);
+        setLoading(false);
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   });
-
-  // const handleImageUpload = (e) => {
-  //   debugger
-  //   const files = Array.from(e.target.files);
-  //   setUploadedImages(files[0].name);
-  //   // images là danh sách file hình ảnh từ input
-  // };
-
-  
 
   const triggerFileInput = () => {
     document.getElementById("fileInput").click();
   };
 
   return (
-    <div className="flex justify-center items-center ">
+    <div className="flex justify-center items-center mt-8 ">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl border border-gray-200">
         <h2 className="text-2xl font-bold mb-6 text-center">Cá nhân</h2>
         <div className="flex border-b mb-6">
@@ -343,11 +337,43 @@ const Profile = () => {
             </div>
 
             <div className="flex justify-center">
-              <button
+              {/* <button
                 type="submit"
                 className="bg-sky-600 text-white font-bold py-2 px-4 rounded-md shadow-md"
               >
                 Lưu
+              </button> */}
+              <button
+                className={`bg-sky-600 text-white px-4 py-2 rounded flex items-center justify-center gap-2 ${
+                  loading ? "cursor-not-allowed opacity-75" : ""
+                }`}
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? (
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    ></path>
+                  </svg>
+                ) : (
+                  "Lưu"
+                )}
               </button>
             </div>
           </form>

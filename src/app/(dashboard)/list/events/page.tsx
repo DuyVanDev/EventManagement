@@ -1,6 +1,10 @@
 "use client";
 
-import { EV_spEvent_Delete, fetchEventList } from "@/app/action/event";
+import {
+  EV_spEvent_ChangeStatus,
+  EV_spEvent_Delete,
+  fetchEventList,
+} from "@/app/action/event";
 import { EV_spFaculty_Delete } from "@/app/action/faculty";
 import { sendNotification } from "@/app/action/sendnotify";
 import FormModal from "@/components/FormModal";
@@ -25,47 +29,60 @@ type Event = {
   LocationName: string;
 };
 
-const handleConfirm = (action: string) => {
-  if (action === "confirm") {
-    toast.success("Event has been ended!", {
-      position: "top-right",
-      autoClose: 3000,
-    });
-  } else {
-    toast.error("Action Canceled", {
-      position: "top-right",
-      autoClose: 3000,
-    });
-  }
-};
+const ConfirmModal = ({
+  event,
+  title = "Xác nhận",
+  description = "Bạn có chắc thay đổi sự kiện này?",
+  onConfirm,
+  onCancel,
+}: {
+  event: any;
+  title?: string;
+  description?: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg shadow-lg w-96 p-6">
+        {/* Title */}
+        <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
 
-const showConfirmToast = (eventName: string) => {
-  toast.info(
-    <div>
-      <p>Sự kiện "{eventName}" sẽ kết thúc?</p>
-      <div className="flex gap-4">
-        <button
-          onClick={() => handleConfirm("confirm")}
-          className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded"
-        >
-          Đồng ý
-        </button>
-        <button
-          onClick={() => handleConfirm("cancel")}
-          className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded"
-        >
-          Hủy
-        </button>
+        {/* Description */}
+        <p className="text-gray-600 mt-4">
+          Bạn có chắc
+          {event?.IsRegistrationOpen == 0 ? (
+            <span className="text-red-500 font-semibold"> đóng cập nhật minh chứng </span>
+          ) : (
+            <span className="text-sky-500 font-semibold"> mở cập nhật minh chứng </span>
+          )}
+          sự kiện {event?.EventName}?
+        </p>
+
+        {/* Actions */}
+        <div className="mt-6 flex justify-end gap-4">
+          {/* Cancel Button */}
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
+          >
+            Hủy
+          </button>
+
+          {/* Confirm Button */}
+          <button
+            onClick={() => {
+              onConfirm(event);
+            }}
+            className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition"
+          >
+            Xác nhận
+          </button>
+        </div>
       </div>
-    </div>,
-    {
-      position: "top-right",
-      autoClose: false, // Không tự đóng, phải đóng thủ công
-      closeButton: false, // Ẩn nút đóng tự động
-    }
+    </div>
   );
 };
-
 // Fetch function for SWR
 const fetcher = (params: object) => fetchEventList(params);
 
@@ -95,6 +112,21 @@ const columns = [
   },
   {
     header: "SV đăng ký",
+    accessor: "StudentCount",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Thông báo",
+    accessor: "Notify",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Trạng thái",
+    accessor: "Status",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "",
     accessor: "action",
   },
 ];
@@ -103,27 +135,60 @@ const EventListPage = () => {
   const { data: EventList, mutate } = useSWR({ EventId: 0 }, fetcher);
   const [EventListTmp, setEventListTmp] = useState(EventList);
   useEffect(() => {
-    setEventListTmp(EventList)
-  },[EventList])
+    setEventListTmp(EventList);
+  }, [EventList]);
 
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isShowListStudent, setIsShowListStudent] = useState(false);
   const [querySearch, setQuerySearch] = useState("");
-  const handleShowListStudent = () => {
-    setIsShowListStudent(true);
+  const handleShowListStudent = (eventId: number) => {
+    setIsShowListStudent(eventId);
   };
 
   const handleCloseListStudent = () => {
     setIsShowListStudent(false);
   };
 
-  const handleSendNotification = () => {
-    setIsNotificationModalOpen(true);
+  const handleSendNotification = (eventId: number) => {
+    setIsNotificationModalOpen(eventId);
   };
 
   const handleCloseNotificationModal = () => {
     setIsNotificationModalOpen(false);
   };
+
+  //#region confirm
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleShowConfirm = (eventId: number) => {
+    setIsModalOpen(eventId);
+  };
+
+  const handleCloseConfirm = () => {
+    setIsModalOpen(false);
+  };
+  const handleConfirm = async (item) => {
+    try {
+      const pr = {
+        EventId: item?.EventId,
+        IsRegistrationOpen: item?.IsRegistrationOpen == 1 ? 0 : 1,
+      };
+      const result = await EV_spEvent_ChangeStatus(pr);
+      if (result?.Status == "OK") {
+        Alertsuccess(result?.ReturnMess);
+        mutate();
+        setIsModalOpen(false);
+      } else {
+        Alertwarning(result?.ReturnMess);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+  //#endregion
   const handleDelete = async (eventId: number) => {
     try {
       const result = await EV_spEvent_Delete({ EventId: eventId });
@@ -143,8 +208,8 @@ const EventListPage = () => {
       item?.EventName.toLowerCase()?.includes(querySearch.toLowerCase())
     );
     setEventListTmp(newList);
-    console.log(newList);
   }, [querySearch]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Set number of items per page
   const totalPages = Math.ceil(EventListTmp?.length / itemsPerPage);
@@ -156,7 +221,6 @@ const EventListPage = () => {
     : [];
 
   const renderRow = (item: Event) => {
-    const isEventEnded = new Date(item.StartTime) < new Date();
     return (
       <tr
         key={item.EventId}
@@ -172,32 +236,41 @@ const EventListPage = () => {
         </td>
         <td>{item.LocationName}</td>
         <td>
-          {/* <button
-            onClick={() => showConfirmToast(item.EventName)}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            End Event
-          </button> */}
-          {/* <button
-            className="w-8 h-8 flex items-center justify-center rounded-full p-2 bg-gray-50"
-            onClick={handleShowListStudent}
-          >
-            <Image src="/view.png" alt="Xem" width={20} height={16}/>
-          </button> */}
           <button
             className={`w-8 h-8 flex items-center justify-center rounded-full bg-lamaSky`}
-            onClick={handleShowListStudent}
+            onClick={() => handleShowListStudent(item.EventId)}
           >
             <Image src={`/view.png`} alt="" width={16} height={16} />
           </button>
         </td>
         <td>
           <button
-            onClick={handleSendNotification}
+            onClick={() => handleSendNotification(item.EventId)}
             className="bg-green-500 text-white px-4 py-2 rounded"
           >
             Gửi thông báo
           </button>
+        </td>
+        <td>
+          <div className="flex items-center justify-center  ">
+            <button
+              onClick={() => handleShowConfirm(item.EventId)}
+              className={`w-16 h-8 flex items-center rounded-full p-1 transition
+                 ${
+                   item?.IsRegistrationOpen == 1 ? "bg-gray-400" : "bg-blue-600"
+                 }
+              
+              `}
+            >
+              <div
+                className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform ${
+                  item?.IsRegistrationOpen == 0
+                    ? "translate-x-8"
+                    : "translate-x-0"
+                }`}
+              ></div>
+            </button>
+          </div>
         </td>
         <td>
           <div className="flex items-center gap-2">
@@ -220,17 +293,26 @@ const EventListPage = () => {
             )}
           </div>
         </td>
-        {isNotificationModalOpen && (
+        {isNotificationModalOpen === item.EventId && (
           <NotificationModal
             onClose={handleCloseNotificationModal}
             event={item}
           />
         )}
 
-        {isShowListStudent && (
+        {isShowListStudent === item.EventId && (
           <StudentList
             onClose={handleCloseListStudent}
             eventId={item?.EventId}
+            eventName={item?.EventName}
+          />
+        )}
+
+        {isModalOpen === item.EventId && (
+          <ConfirmModal
+            event={item}
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
           />
         )}
       </tr>
@@ -270,6 +352,7 @@ const EventListPage = () => {
                   ParticipantLimit: 0,
                   Thumnail: "",
                   ListImage: null,
+                  Point : 0
                 }}
                 onActionComplete={() => mutate()}
               />
@@ -301,7 +384,8 @@ const NotificationModal = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const convertToArray = (pr: string) => {
-    const convertedArray = pr.split(";").map(Number); // Tách chuỗi và chuyển thành mảng số
+    console.log(pr);
+    const convertedArray = pr?.split(";").map(Number); // Tách chuỗi và chuyển thành mảng số
     return convertedArray;
   };
 

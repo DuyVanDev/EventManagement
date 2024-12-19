@@ -27,7 +27,7 @@ const forms: {
   [key: string]: (
     type: "create" | "update",
     data: any,
-    setOpen: (open: boolean) => void,
+    setOpen?: (open: boolean) => void,
     onActionComplete?: () => void,
     onActionDelete?: () => void,
   ) => JSX.Element;

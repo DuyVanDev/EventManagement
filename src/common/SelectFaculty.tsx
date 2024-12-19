@@ -30,7 +30,6 @@ const SelectFacultyComp = React.forwardRef<HTMLDivElement, SelectFacultyProps>(
       [onSelected]
     );
 
-    console.log(FacultyId)
 
     const getListDistrictFromAPI = async (FacultyId: number) => {
       try {

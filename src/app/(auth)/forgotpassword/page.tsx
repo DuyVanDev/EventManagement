@@ -2,12 +2,9 @@
 import { sendMail } from "@/app/action/sendnotify";
 import {
   EV_spCheckEmail_Exist,
-  EV_spStudent_Save,
   EV_spUser_ForgotPassword,
 } from "@/app/action/user";
-import { SelectFaculty } from "@/common";
 import InputField from "@/components/InputField";
-import { useAuth } from "@/context/AuthContext";
 import { Alerterror, Alertsuccess, GeneratePassword } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -133,7 +130,7 @@ const ForgotPassword = () => {
               "Gửi"
             )}
           </button>
-          <p className="text-right mt-2 text-sm font-light">
+          <p className="text-center mt-2 text-sm font-light">
             Bạn đã có tài khoản hãy{" "}
             <Link className="text-sky-600 hover:underline" href={"/"}>
               Đăng nhập

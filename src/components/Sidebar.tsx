@@ -39,13 +39,13 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="px-4 h-max sticky top-8 shadow-xl md:w-1/3 py-2 w-full">
-      <h1 className="mb-4 text-sm font-medium">Tìm kiếm</h1>
-      <h1 className="mt-8 mb-4 text-sm font-medium">Các loại sự kiện</h1>
-      <div className="flex flex-col gap-2 text-sm">
+    <div className="px-4 h-max sticky top-8 shadow-xl md:w-1/3 py-4 w-full bg-white">
+      <h1 className="mt-2 mb-4 text-sm font-medium">Các loại sự kiện</h1>
+      <div className="flex flex-col gap-3 text-sm">
         {Array.isArray(DataEvent) &&
           DataEvent?.map((item) => (
             <label
+            key={item?.Id}
               htmlFor=""
               className="flex items-center gap-2 cursor-pointer"
             >

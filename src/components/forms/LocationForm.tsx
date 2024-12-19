@@ -79,13 +79,12 @@ const LocationForm = ({
 
   return (
     <form className="flex flex-col gap-2" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">Thêm mới địa điểm</h1>
+      <h1 className="text-xl font-semibold">{type === "create" ? "Thêm mới địa điểm" : "Sửa địa điểm"}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <InputField
-          label="Tên Khoa - Viện"
+          label="Tên địa điểm"
           name="LocationName"
-          defaultValue={data?.LocationName}
           register={register}
           error={errors?.LocationName}
         />
@@ -93,7 +92,6 @@ const LocationForm = ({
         <InputField
           label="Địa chỉ"
           name="Address"
-          defaultValue={data?.Address}
           register={register}
           error={errors?.Address}
         />
@@ -101,7 +99,6 @@ const LocationForm = ({
           label="Sức chứa"
           type="number"
           name="Capacity"
-          defaultValue={data?.Capacity}
           register={register}
           error={errors?.Capacity}
         />

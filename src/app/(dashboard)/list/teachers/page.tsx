@@ -60,7 +60,7 @@ const columns = [
 ];
 
 const TeacherListPage = () => {
-  const { data: ListData, mutate } = useSWR({ Id: 0 }, fetcher);
+  const { data: ListData, mutate, isLoading } = useSWR({ Id: 0 }, fetcher);
   const [teacherListTmp, seTteacherListTmp] = useState(ListData);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Set number of items per page
@@ -77,9 +77,11 @@ const TeacherListPage = () => {
   }, [ListData]);
   const [querySearch, setQuerySearch] = useState("");
   useEffect(() => {
-    const newList = ListData?.filter((item) =>
-      item?.FullName?.toLowerCase()?.includes(querySearch.toLowerCase())
-    );
+    const newList =
+      Array.isArray(ListData) &&
+      ListData?.filter((item) =>
+        item?.FullName?.toLowerCase()?.includes(querySearch.toLowerCase())
+      );
     seTteacherListTmp(newList);
   }, [querySearch]);
 
@@ -103,10 +105,7 @@ const TeacherListPage = () => {
     >
       <td className="flex items-center gap-4 p-4">
         <Image
-          src={
-            item.Avatar ||
-            "https://images.pexels.com/photos/2888150/pexels-photo-2888150.jpeg?auto=compress&cs=tinysrgb&w=1200"
-          }
+          src={item.Avatar || "/avatar.png"}
           alt=""
           width={40}
           height={40}
@@ -182,7 +181,13 @@ const TeacherListPage = () => {
       </div>
       {/* LIST */}
       {/* <Table columns={columns} renderRow={renderRow} data={teachersData} /> */}
-      <Table columns={columns} renderRow={renderRow} data={currentData} />
+      {isLoading ? (
+        <div className="flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        <Table columns={columns} renderRow={renderRow} data={currentData} />
+      )}
       {/* PAGINATION */}
       <Pagination
         currentPage={currentPage}

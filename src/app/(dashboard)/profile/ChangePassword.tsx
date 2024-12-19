@@ -4,6 +4,7 @@ import InputField from "@/components/InputField";
 import { useAuth } from "@/context/AuthContext";
 import { Alerterror, Alertsuccess } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -27,6 +28,7 @@ type Inputs = z.infer<typeof schema>;
 
 const ChangePassword = () => {
   const { login, user } = useAuth();
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -44,6 +46,7 @@ const ChangePassword = () => {
   });
 
   const onSubmit = handleSubmit(async (dataform) => {
+    setLoading(true);
     try {
       const pr = {
         UserId: user?.UserId,
@@ -56,11 +59,15 @@ const ChangePassword = () => {
         setValue("NewPassword", "");
         setValue("ConfirmNewPassword", "");
         Alertsuccess(result?.ReturnMess);
+        setLoading(false);
       } else {
+        setLoading(false);
         Alerterror(result?.ReturnMess);
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   });
 
@@ -77,7 +84,7 @@ const ChangePassword = () => {
       </div>
       <div>
         <InputField
-          label="Mật khẩu hiện tại"
+          label="Mật khẩu mới"
           type="password"
           name="NewPassword"
           register={register}
@@ -94,11 +101,43 @@ const ChangePassword = () => {
         />
       </div>
       <div className="flex justify-center">
-        <button
+        {/* <button
           type="submit"
           className=" bg-sky-600 text-white font-bold py-2 px-4 rounded-md shadow-md"
         >
           Đổi mật khẩu
+        </button> */}
+        <button
+          className={`bg-sky-600 text-white px-4 py-2 rounded flex items-center justify-center gap-2 ${
+            loading ? "cursor-not-allowed opacity-75" : ""
+          }`}
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? (
+            <svg
+              className="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              ></path>
+            </svg>
+          ) : (
+            "Đổi mật khẩu"
+          )}
         </button>
       </div>
     </form>

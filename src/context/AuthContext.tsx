@@ -1,9 +1,15 @@
-'use client'
+"use client";
 import { EV_spEvent_Login } from "@/app/action/user";
 import { routeAccessMap } from "@/lib/settings";
 import { Alertsuccess, Alertwarning } from "@/utils/Notifications";
 import { useRouter } from "next/navigation";
-import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from "react";
 
 // User data shape
 interface User {
@@ -43,27 +49,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (storedUser) {
       const userFromStorage = JSON.parse(storedUser);
       setUser(userFromStorage);
-  
+
       const role = document.cookie
         .split("; ")
         .find((row) => row.startsWith("role="))
         ?.split("=")[1];
-  
+
       if (role) {
         const allowedPaths = Object.entries(routeAccessMap)
           .filter(([, allowedRoles]) => allowedRoles.includes(role))
           .map(([path]) => new RegExp(`^${path}$`));
-  
+
         const currentPath = window.location.pathname;
-  
+
         // Kiểm tra nếu currentPath không nằm trong danh sách allowedPaths
-        const isPathAllowed = allowedPaths.some((regex) => regex.test(currentPath));
-  
+        const isPathAllowed = allowedPaths.some((regex) =>
+          regex.test(currentPath)
+        );
+
         if (isPathAllowed) {
           router.push(`${currentPath}`); // Điều hướng về trang chính của role nếu không hợp lệ
-        }
-        else {
-          router.push(`/${role}`); 
+        } else {
+          router.push(`/${role}`);
         }
       }
     } else {
@@ -83,11 +90,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(response.result[0]);
         localStorage.setItem("userEvent", JSON.stringify(response.result[0]));
         document.cookie = `role=${response.result[0]?.RoleTmp}; path=/; max-age=86400;`;
-        window.location.href = `/${response.result[0]?.RoleTmp}`;
         Alertsuccess("Đăng nhập thành công");
+        setTimeout(() => {
+          window.location.href = `/${response.result[0]?.RoleTmp}`;
+        }, 2000);
+
       } else {
         Alertwarning(response?.result);
       }
+      return response;
     } catch (err) {
       throw new Error("Login failed");
     }
@@ -99,7 +110,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("userEvent");
     document.cookie = "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
     window.location.href = "/sign-in";
-
   };
 
   return (

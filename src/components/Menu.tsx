@@ -34,7 +34,7 @@ const Menu = () => {
           visible: ["admin"],
         },
         {
-          icon: "/subject.png",
+          icon: "/calendar.png",
           label: "Khoa - Viện",
           href: "/list/faculty",
           visible: ["admin"],
@@ -53,7 +53,13 @@ const Menu = () => {
         },
         {
           icon: "/exam.png",
-          label: "Sự kiện của tôi",
+          label: "Sự kiện tham gia",
+          href: "/myevent",
+          visible: ["student"],
+        },
+        {
+          icon: "/exam.png",
+          label: "training-point",
           href: "/myevent",
           visible: ["student"],
         },
@@ -64,7 +70,7 @@ const Menu = () => {
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (
         <div className="flex flex-col gap-2" key={i.title}>
-          <span className="hidden lg:block text-gray-400 font-light my-4">
+          <span className="hidden lg:block text-white font-light my-4">
             {i.title}
           </span>
           {i.items.map((item) => {
@@ -73,7 +79,7 @@ const Menu = () => {
                 <Link
                   href={item.href}
                   key={item.label}
-                  className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md hover:bg-lamaSkyLight"
+                  className="flex items-center justify-center lg:justify-start gap-4 text-white py-2 md:px-2 rounded-md hover:bg-lamaSkyLight hover:text-black"
                 >
                   <Image src={item.icon} alt="" width={20} height={20} />
                   <span className="hidden lg:block">{item.label}</span>

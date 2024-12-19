@@ -13,7 +13,7 @@ const schema = z.object({
   FacultyId: z.number(),
   FacultyName: z
     .string()
-    .min(6, { message: "Tên khoa-viện phải có ít nhất 6 ký tự" }),
+    .min(5, { message: "Tên khoa-viện phải có ít nhất 5 ký tự" }),
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -58,7 +58,7 @@ const FacultyForm = ({
       if (result.Status == "OK") {
         Alertsuccess(result.ReturnMess);
         setOpen(false);
-        onActionComplete(); 
+        onActionComplete();
       } else {
         Alertwarning(result.ReturnMess);
       }
@@ -69,13 +69,14 @@ const FacultyForm = ({
 
   return (
     <form className="flex flex-col gap-2" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">Thêm mới Khoa - Viện</h1>
+      <h1 className="text-xl font-semibold">
+        {type === "create" ? "Thêm mới Khoa - Viện" : "Sửa Khoa - Viện"}
+      </h1>
 
       <div className="grid grid-cols-1 gap-4">
         <InputField
           label="Tên Khoa - Viện"
           name="FacultyName"
-          defaultValue={data?.FacultyName}
           register={register}
           error={errors?.FacultyName}
         />

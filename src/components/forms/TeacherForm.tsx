@@ -56,6 +56,7 @@ const TeacherForm = ({
       Email: data.Email,
     },
   });
+  console.log(data.Email)
 
   const [uploadedImages, setUploadedImages] = useState([]);
   const [imageData, setImageData] = useState(data?.Avatar); // Dữ liệu ảnh dạng string từ server hoặc xử lý khác
@@ -115,6 +116,7 @@ const TeacherForm = ({
         Address: dataform?.Address,
         BirthDay: dataform?.BirthDay,
         Specialty: dataform?.Specialty,
+        Email: dataform?.Email,
         Avatar: _newListImage,
       };
       const result = await EV_spTeacher_Save(pr);
@@ -142,15 +144,9 @@ const TeacherForm = ({
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">Thêm mới giảng viên</h1>
+      <h1 className="text-xl font-semibold">Sửa thông tin giảng viên</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 flex-wrap gap-4">
-        <InputField
-          label="UserName"
-          name="UserName"
-          defaultValue={data?.UserName}
-          register={register}
-          error={errors?.UserName}
-        />
+       
         <InputField
           label="Email"
           name="Email"

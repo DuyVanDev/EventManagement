@@ -5,20 +5,18 @@ import BigCalendar from "@/components/BigCalender";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
+import EventListTeacher from "./eventlist";
 
 const fetcherEventByTeacher = (params: object) => fetchEventByTeacher(params);
 
 const transformApiData = (event) => {
-  console.log(event);
   const [startDate, startTime] = event.StartTime.split(" ");
   const [startDay, startMonth, startYear] = startDate.split("/");
   const [startHour, startMinute] = startTime.split(":");
-  console.log(startDate);
 
   const [endDate, endTime] = event.EndTime.split(" ");
   const [endDay, endMonth, endYear] = endDate.split("/");
   const [endHour, endMinute] = endTime.split(":");
-  console.log(endDate);
 
   return {
     title: event.EventName,
@@ -50,11 +48,11 @@ const TeacherPage = () => {
   );
   useEffect(() => {
     const transformedEvents =
-      Array.isArray(ListData) && ListData?.map(transformApiData);
+      ListData?.map(transformApiData);
     setData(transformedEvents);
   }, [ListData]);
+  console.log(ListData)
 
-  console.log(Data);
 
   return (
     <div className="flex-1 p-4 flex gap-4 flex-col xl:flex-row">
@@ -67,7 +65,7 @@ const TeacherPage = () => {
       </div>
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
-        <Announcements />
+        <EventListTeacher data={ListData} />
       </div>
     </div>
   );

@@ -119,3 +119,13 @@ export const EV_spChangePassword_Save = async (data: EV_spChangePassword_Save) =
     return await fetchMethod(data, "EV_spChangePassword_Save");
   } catch (error) {}
 };
+
+interface EV_spUser_Delete {
+  UserId?: number;
+}
+
+export const EV_spUser_Delete = async (data: EV_spUser_Delete) => {
+  try {
+    return await fetchMethod(data, "EV_spUser_Delete");
+  } catch (error) {}
+};

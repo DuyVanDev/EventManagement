@@ -13,34 +13,32 @@ const StudentPage = () => {
   const { user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // Đồng bộ giá trị ban đầu của eventTypes từ URL
   const [eventTypes, setEventTypes] = useState<string[]>(
     searchParams.get("eventtype")?.split(",") || []
   );
-  
+
   // Fetch data từ server với eventTypes
   const { data: ListData, mutate } = useSWR(
     { EventId: 0, UserId: user?.UserId, EventTypeId: eventTypes.join(",") },
     fetcher
   );
 
-  console.log(ListData)
-  
   // Cập nhật eventTypes mỗi khi URL thay đổi
   useEffect(() => {
     const eventtype = searchParams.get("eventtype");
     const parsedTypes = eventtype ? eventtype.split(",") : [];
     setEventTypes(parsedTypes);
   }, [searchParams]);
-  console.log(eventTypes.join(",") )
   return (
-    <div className="bg-gray-50 text-gray-800 font-sans">
-      <div className="mx-auto p-6">
-        <div className="flex gap-6">
+    <div className="h-screen bg-cover bg-center">
+      <div className="">
+        <div className="flex gap-6 flex-col md:flex-row p-2">
           {/* Main Content */}
-          <div className="w-2/3 pr-6">
-            <div className="pt-4 space-y-6">
+          <div className="w-full md:w-2/3  pr-6  p-6 h-full">
+            <p className="font-semibold text-xl">Danh sách sự kiện</p>
+            <div className="pt-4 space-y-2 ">
               {ListData?.map((article, index) => (
                 <BlogItem post={article} key={index} />
               ))}

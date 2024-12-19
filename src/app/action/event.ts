@@ -13,6 +13,7 @@ interface Event {
   EventTypeId : number;
   ParticipantLimit : number;
   Creater : number;
+  Point? : number;
 }
 
 export const EV_spEvent_Save = async (data: Event) => {
@@ -142,5 +143,28 @@ interface EV_spStudentOfEvent_GET {
 export const EV_spStudentOfEvent_GET = async (data: EV_spStudentOfEvent_GET) => {
   try {
     return await fetchMethod(data, "EV_spStudentOfEvent_GET");
+  } catch (error) {}
+};
+
+interface EV_spEvent_ChangeStatus {
+  EventId?: number;
+  IsRegistrationOpen? : number;
+}
+
+export const EV_spEvent_ChangeStatus = async (data: EV_spEvent_ChangeStatus) => {
+  try {
+    return await fetchMethod(data, "EV_spEvent_ChangeStatus");
+  } catch (error) {}
+};
+
+interface EV_spEventStudent_Save {
+  Id?: number;
+  ProofImage? : string;
+  Status? : any;
+}
+
+export const EV_spEventStudent_Save = async (data: EV_spEventStudent_Save) => {
+  try {
+    return await fetchMethod(data, "EV_spEventStudent_Save");
   } catch (error) {}
 };

@@ -1,5 +1,8 @@
 // Tạo cấu hình với next-intl
 const nextConfig = {
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
   typescript: {
     // !! WARN !!
     // Cho phép build thành công ngay cả khi có lỗi type

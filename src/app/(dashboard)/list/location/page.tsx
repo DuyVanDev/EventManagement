@@ -33,7 +33,7 @@ const columns = [
     accessor: "Capacity",
   },
   {
-    header: "Actions",
+    header: "",
     accessor: "action",
   },
 ];

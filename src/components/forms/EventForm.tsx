@@ -18,8 +18,8 @@ import { Alerterror, Alertsuccess, Alertwarning } from "@/utils/Notifications";
 import { FormatDateJsonPro } from "@/utils/FormatDateJson";
 import ImgMutilUploadComp from "@/utils/ImgMutilUpload";
 import { CallUploadImage } from "@/utils/CallUploadImage";
-import { sendNotification } from "@/app/action/sendnotify";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 const schema = z.object({
   EventId: z.number(),
@@ -27,14 +27,22 @@ const schema = z.object({
     .string()
     .min(5, { message: "Tên sự kiện phải có ít nhất 5 ký tự!" }),
   EventDescription: z.string().min(1, { message: "Hãy nhập mô tả sự kiện!" }),
-  ParticipantLimit: z.any(),
+  ParticipantLimit: z
+    .string()
+    .transform((val) => parseInt(val, 10)) // Chuyển từ string sang number
+    .refine((val) => val > 0, {
+      message: "Số lượng người tham gia phải lớn hơn 0!",
+    }),
   Time: z.any(),
-  LectureId: z.any(),
+  LecturerId: z.string().min(1, { message: "Vui lòng chọn giảng viên!" }),
   LocationId: z.number().min(1, { message: "Vui lòng chọn địa điểm!" }),
-  EventTypeId: z.number().min(1, { message: "Vui lòng chọn loại sự kiện!" }),
-  LecturerId: z.any(),
+  EventTypeId: z.any(),
   Thumnail: z.any(),
   ListImage: z.any(),
+  Point: z
+    .string()
+    .transform((val) => parseInt(val, 10)) // Chuyển từ string sang number
+    .refine((val) => val > 0, { message: "Số điểm phải lớn hơn 0!" }),
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -62,17 +70,21 @@ const EventForm = ({
       EventDescription: data.EventDescription,
       Time: [data.StartTime, data.EndTime],
       LocationId: data.LocationId,
-      LectureId: data.LecturerId,
+      LecturerId: data.LecturerId,
       EventTypeId: data.EventTypeId,
       ParticipantLimit: data.ParticipantLimit,
       Thumnail: data.Thumnail,
       ListImage: data?.ListImage?.split(";").filter(Boolean) || [],
+      Point: data?.Point || 0,
     },
   });
+
+  console.log(data);
+  const [isLoading, setIsLoading] = useState(false);
   //#region  thumnail
   const [imagesThumnail, setImagesThumnail] = useState(data?.Thumnail);
   const [uploadedThumnail, setUploadedThumnail] = useState([]);
-  const {user} = useAuth()
+  const { user } = useAuth();
   const [flag, setFlag] = useState(0); // flag để reset hoặc xử lý khác
   const [isReset, setIsReset] = useState(0); // kiểm soát việc reset form upload
   const [isMutil, setIsMutil] = useState(false); // cho phép upload nhiều ảnh
@@ -84,7 +96,9 @@ const EventForm = ({
   //#endregion
 
   // #region danh sach ảnh
-  const [images, setImages] = useState(data?.ListImage ? data?.ListImage?.split(';') : []);
+  const [images, setImages] = useState(
+    data?.ListImage ? data?.ListImage?.split(";") : []
+  );
   const [uploadedListImage, setUploadedListImage] = useState([]);
 
   const handleFileUpload = (event) => {
@@ -93,16 +107,16 @@ const EventForm = ({
   };
   const combinedImages = [...images, ...uploadedListImage];
 
-
   // #endregion
   useEffect(() => {
     if (data) {
       setValue("EventName", data.EventName);
       setValue("EventDescription", data.EventDescription);
-      setValue("ParticipantLimit", data.ParticipantLimit);
+      setValue("ParticipantLimit", data.ParticipantLimit.toString());
       setValue("Time", [data.StartTime, data.EndTime]);
       setValue("Thumnail", data.Thumnail);
       setValue("ListImage", data?.ListImage?.split(";").filter(Boolean) || []);
+      setValue("Point", data?.Point || 0);
     }
   }, [data, setValue]);
 
@@ -110,7 +124,8 @@ const EventForm = ({
     setValue("EventId", 0);
     setValue("EventName", "");
     setValue("EventDescription", "");
-    setValue("ParticipantLimit", 0);
+    setValue("ParticipantLimit", "0");
+    setValue("Point", "0");
     setValue("Thumnail", "");
     setValue("ListImage", null);
     setImagesThumnail("");
@@ -119,6 +134,7 @@ const EventForm = ({
   };
 
   const onSubmit = handleSubmit(async (dataform) => {
+    setIsLoading(true);
     try {
       let _newThumnail = "";
       if (uploadedThumnail.length > 0 && Array.isArray(uploadedThumnail)) {
@@ -138,6 +154,7 @@ const EventForm = ({
         _newThumnail = data?.Thumnail;
       } else if (!_newThumnail) {
         Alerterror("File error");
+        setIsLoading(false);
         return;
       }
       let _newListImage = "";
@@ -161,6 +178,8 @@ const EventForm = ({
         _newListImage = data?.ListImage;
       } else if (!_newListImage) {
         Alerterror("File error");
+        setIsLoading(false);
+
         return;
       }
       const pr = {
@@ -175,20 +194,23 @@ const EventForm = ({
         ParticipantLimit: dataform?.ParticipantLimit,
         Thumnail: _newThumnail,
         ListImage: _newListImage,
-        Creater : user?.UserId
+        Creater: user?.UserId,
+        Point: dataform?.Point,
       };
       const result = await EV_spEvent_Save(pr);
       if (result.Status == "OK") {
         Alertsuccess(result.ReturnMess);
         setOpen(false);
         onActionComplete();
-      }
-      else {
+        setIsLoading(false);
+      } else {
         Alertwarning(result.ReturnMess);
-
+        setIsLoading(false);
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsLoading(false);
     }
   });
 
@@ -258,7 +280,7 @@ const EventForm = ({
           />
           {errors.LecturerId && (
             <span className="text-red-500 text-sm">
-              {errors.LecturerId.message}
+              Vui lòng chọn giảng viên!
             </span>
           )}
         </div>
@@ -271,13 +293,21 @@ const EventForm = ({
           error={errors.ParticipantLimit}
         />
 
+        <InputField
+          label="Điểm rèn luyện"
+          type="number"
+          name="Point"
+          register={register}
+          error={errors.Point}
+        />
+
         <div>
           <Controller
             name="Time"
             control={control}
             render={({ field: { onChange, value } }) => (
               <SelectDateTimeRangePicker
-                label="Thời gian"
+                label="Ngày tổ chức"
                 onSelected={onChange}
                 value={value}
                 isRequired={true}
@@ -301,7 +331,7 @@ const EventForm = ({
             isMutil={isMutil}
           />
         </div>
-        <div className="max-w-md mx-auto">
+        <div className="max-w-md  col-span-2">
           {/* Input tải ảnh lên */}
           <input
             type="file"
@@ -315,7 +345,7 @@ const EventForm = ({
             htmlFor="imageInput"
             className="cursor-pointer px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Tải ảnh lên
+            Tải hình ảnh sự kiện
           </label>
 
           {/* Khu vực hiển thị ảnh đã tải lên */}
@@ -326,18 +356,26 @@ const EventForm = ({
                   key={index}
                   className="relative w-20 h-20 rounded overflow-hidden"
                 >
-                  <img
-                    src={typeof image === 'string' ? image : URL.createObjectURL(image)}
+                  <Image
+                    src={
+                      typeof image === "string"
+                        ? image
+                        : URL.createObjectURL(image)
+                    }
                     alt={`Image ${index + 1}`}
+                    width={50}
+                    height={50}
                     className="w-full h-full object-cover"
                   />
                 </div>
               ))
             ) : (
               <div className="relative w-20 h-20 rounded overflow-hidden">
-                <img
+                <Image
                   src="/showimg.png" // Đường dẫn tới ảnh placeholder
                   alt="No image"
+                  width={50}
+                  height={50}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -376,8 +414,43 @@ const EventForm = ({
         </div>
       </div>
 
-      <button className="bg-blue-400 text-white p-2 rounded-md !cursor-pointer ">
+      {/* <button className="bg-blue-400 text-white p-2 rounded-md !cursor-pointer ">
         {type === "create" ? "Tạo" : "Sửa"}
+      </button> */}
+
+      <button
+        className={`bg-sky-600 text-white px-4 py-2 rounded flex items-center justify-center gap-2 ${
+          isLoading ? "cursor-not-allowed opacity-75" : ""
+        }`}
+        type="submit"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <svg
+            className="animate-spin h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v8H4z"
+            ></path>
+          </svg>
+        ) : type === "create" ? (
+          "Thêm"
+        ) : (
+          "Sửa"
+        )}
       </button>
     </form>
   );

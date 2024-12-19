@@ -1,5 +1,5 @@
 "use client";
-import { Calendar, momentLocalizer, Views } from "react-big-calendar";
+import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";
@@ -13,7 +13,6 @@ const BigCalendar = ({ Data }: { Data: any }) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date()); // Ngày hiện tại
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [view, setView] = useState<View>(Views.WEEK);
-
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
   };
@@ -32,7 +31,6 @@ const BigCalendar = ({ Data }: { Data: any }) => {
         onSelectEvent={handleSelectEvent}
         view={view}
         onView={(newView) =>{
-          console.log(newView)
           setView(newView)
         }}
         components={{
