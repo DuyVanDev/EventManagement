@@ -24,7 +24,7 @@ const columns = [
   },
 
   {
-    header: "Actions",
+    header: "",
     accessor: "action",
   },
 ];

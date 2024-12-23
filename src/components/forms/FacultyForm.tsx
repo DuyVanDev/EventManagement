@@ -22,11 +22,12 @@ const FacultyForm = ({
   type,
   data,
   setOpen,
-  onActionComplete,
-  onActionDelete,
+  onActionComplete
 }: {
   type: "create" | "update";
   data?: any;
+  setOpen? : any,
+  onActionComplete: any,
 }) => {
   const {
     register,
@@ -58,10 +59,11 @@ const FacultyForm = ({
       if (result.Status == "OK") {
         Alertsuccess(result.ReturnMess);
         setOpen(false);
-        onActionComplete();
+        
       } else {
         Alertwarning(result.ReturnMess);
       }
+      onActionComplete();
     } catch (err) {
       console.log(err);
     }

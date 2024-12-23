@@ -6,6 +6,7 @@ import { z } from "zod";
 import InputField from "../InputField";
 import {
   SelectDateTimeRangePicker,
+  SelectFaculty,
   SelectLecture,
   SelectLocation,
 } from "@/common";
@@ -43,6 +44,7 @@ const schema = z.object({
     .string()
     .transform((val) => parseInt(val, 10)) // Chuyển từ string sang number
     .refine((val) => val > 0, { message: "Số điểm phải lớn hơn 0!" }),
+  FacultyId: z.any(),
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -55,6 +57,8 @@ const EventForm = ({
 }: {
   type: "create" | "update";
   data?: any;
+  setOpen? : any,
+  onActionComplete: any,
 }) => {
   const {
     register,
@@ -76,6 +80,7 @@ const EventForm = ({
       Thumnail: data.Thumnail,
       ListImage: data?.ListImage?.split(";").filter(Boolean) || [],
       Point: data?.Point || 0,
+      FacultyId: data.FacultyId || 0,
     },
   });
 
@@ -106,7 +111,7 @@ const EventForm = ({
     setUploadedListImage(files);
   };
   const combinedImages = [...images, ...uploadedListImage];
-
+  console.log(data);
   // #endregion
   useEffect(() => {
     if (data) {
@@ -116,7 +121,8 @@ const EventForm = ({
       setValue("Time", [data.StartTime, data.EndTime]);
       setValue("Thumnail", data.Thumnail);
       setValue("ListImage", data?.ListImage?.split(";").filter(Boolean) || []);
-      setValue("Point", data?.Point || 0);
+      setValue("Point", data?.Point.toString());
+      setValue("FacultyId", data?.FacultyId || 0);
     }
   }, [data, setValue]);
 
@@ -196,6 +202,7 @@ const EventForm = ({
         ListImage: _newListImage,
         Creater: user?.UserId,
         Point: dataform?.Point,
+        FacultyId: dataform?.FacultyId,
       };
       const result = await EV_spEvent_Save(pr);
       if (result.Status == "OK") {
@@ -216,7 +223,11 @@ const EventForm = ({
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">Thêm mới sự kiện</h1>
+      <h1 className="text-xl font-semibold">{type === "create" ? (
+          "Thêm mới sự kiện"
+        ) : (
+          "Sửa sự kiện"
+        )}</h1>
 
       <div className="grid grid-cols-2 gap-4">
         <InputField
@@ -248,23 +259,25 @@ const EventForm = ({
 
         <div>
           <Controller
-            name="EventTypeId"
+            name="FacultyId"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <SelectEventType
-                onSelected={(selected) => onChange(selected.value)}
-                label="Loại sự kiện"
-                onActive={data.EventTypeId}
+              <SelectFaculty
+                label="Khoa-viện"
+                onSelected={(selected) => {
+                  onChange(selected.value);
+                }}
+                FacultyId={data.FacultyId}
+                isRequired={true}
               />
             )}
           />
-          {errors.EventTypeId && (
+          {errors.FacultyId && (
             <span className="text-red-500 text-sm">
-              {errors.EventTypeId.message}
+              {errors.FacultyId.message}
             </span>
           )}
         </div>
-
         <div>
           <Controller
             name="LecturerId"
@@ -320,6 +333,25 @@ const EventForm = ({
             </span>
           )}
         </div>
+        <div>
+          <Controller
+            name="EventTypeId"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <SelectEventType
+                onSelected={(selected) => onChange(selected.value)}
+                label="Loại sự kiện"
+                onActive={data.EventTypeId}
+              />
+            )}
+          />
+          {errors.EventTypeId && (
+            <span className="text-red-500 text-sm">
+              {errors.EventTypeId.message}
+            </span>
+          )}
+        </div>
+
         <div>
           <ImgMutilUploadComp
             data={imagesThumnail}

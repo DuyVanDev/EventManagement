@@ -18,6 +18,7 @@ const NotificationTest = () => {
     mutate,
     isLoading,
   } = useSWR({ Id: 0, UserId: user?.UserId }, fetcher);
+  console.log(Data)
   const dropdownRef = useRef(null);
   const [message, setMessage] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -111,7 +112,7 @@ const NotificationTest = () => {
                 </div>
               ) : (
                 <>
-                  {Data?.length > 0 ? (
+                  {Data?.data?.length > 0 ? (
                     Data?.data?.map((item, index) => (
                       <div
                         key={index}

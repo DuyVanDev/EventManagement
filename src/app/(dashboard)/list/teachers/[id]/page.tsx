@@ -1,23 +1,31 @@
+'use client'
+import { fetchEventByTeacher } from "@/app/action/event";
 import { fetchTeacher } from "@/app/action/user";
-import Announcements from "@/components/Announcements";
-import BigCalendar from "@/components/BigCalender";
+import CalendarAdmin from "@/components/Calendar";
 import FormModal from "@/components/FormModal";
-import Performance from "@/components/Performance";
 import { role } from "@/lib/data";
 import { FormatDateJsonPro } from "@/utils/FormatDateJson";
 import Image from "next/image";
-import Link from "next/link";
 
-const SingleTeacherPage = async ({
+import useSWR from "swr";
+
+const fetcherTeacher = (params: object) => fetchTeacher(params);
+const fetcherEvents = (params: object) => fetchEventByTeacher(params);
+
+const SingleTeacherPage =  ({
   params,
 }: {
   params: { id: number };
 }) => {
 
   const { id } = params;
-  const teacher = await fetchTeacher({Id : id})
+  const { data: teacher, mutate,isLoading } = useSWR({ Id: id }, fetcherTeacher);
+  const { data: events } = useSWR({ UserId: id }, fetcherEvents);
+  console.log(teacher)
+
   return (
-    <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
+    <>
+    {teacher && <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
       {/* LEFT */}
       <div className="w-full">
         {/* TOP */}
@@ -33,34 +41,42 @@ const SingleTeacherPage = async ({
                 className="w-36 h-36 rounded-full object-cover"
               />
             </div>
-            <div className="w-2/3 flex flex-col justify-between gap-4">
-              <div className="flex items-center gap-4">
+            <div className="w-2/3 flex flex-col  gap-4  ">
+              <div className="flex items-center gap-4 justify-between">
                 <h1 className="text-xl font-semibold">{teacher[0]?.FullName}</h1>
+                <div className="shadow-lg">
                 {role === "admin" && <FormModal
                   table="teacher"
                   type="update"
                   data={teacher[0]}
+                  onActionComplete={() => mutate()}
                 />}
+                </div>
               </div>
               {/* <p className="text-sm text-gray-500">
                 Lorem ipsum, dolor sit amet consectetur adipisicing elit.
               </p> */}
-              <div className="flex items-center justify-between gap-2 flex-wrap text-xs font-medium">
+              <div className="flex items-center  gap-x-2 gap-y-6 flex-wrap text-sm font-medium">
                 {/* <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
                   <Image src="/blood.png" alt="" width={14} height={14} />
                   <span>A+</span>
                 </div> */}
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image src="/date.png" alt="" width={14} height={14} />
+                  <Image src="/date.png" alt="" width={20} height={20} />
                   <span>{FormatDateJsonPro(teacher[0]?.BirthDay,7)}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image src="/mail.png" alt="" width={14} height={14} />
+                  <Image src="/mail.png" alt="" width={20} height={20} />
                   <span>{teacher[0]?.Email}</span>
                 </div>
+                
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image src="/phone.png" alt="" width={14} height={14} />
+                  <Image src="/phone.png" alt="" width={20} height={20} />
                   <span>{teacher[0]?.PhoneNumber}</span>
+                </div>
+                <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
+                  <Image src="/filter.png" alt="" width={20} height={20} />
+                  <span>{teacher[0]?.FacultyName}</span>
                 </div>
               </div>
             </div>
@@ -77,8 +93,8 @@ const SingleTeacherPage = async ({
                 className="w-6 h-6"
               />
               <div className="">
-                <h1 className="text-xl font-semibold">90%</h1>
-                <span className="text-sm text-gray-400">Attendance</span>
+                <h1 className="text-xl font-semibold">{events?.length || 0}</h1>
+                <span className="text-sm text-gray-400">Sự kiện tham gia</span>
               </div>
             </div>
             {/* CARD */}
@@ -91,8 +107,8 @@ const SingleTeacherPage = async ({
                 className="w-6 h-6"
               />
               <div className="">
-                <h1 className="text-xl font-semibold">2</h1>
-                <span className="text-sm text-gray-400">Branches</span>
+                <h1 className="text-xl font-semibold">{teacher[0]?.FacultyName}</h1>
+                <span className="text-sm text-gray-400">Khoa / Viện</span>
               </div>
             </div>
             {/* CARD */}
@@ -105,8 +121,8 @@ const SingleTeacherPage = async ({
                 className="w-6 h-6"
               />
               <div className="">
-                <h1 className="text-xl font-semibold">6</h1>
-                <span className="text-sm text-gray-400">Lessons</span>
+                <h1 className="text-xl font-semibold">{teacher[0]?.Sex}</h1>
+                <span className="text-sm text-gray-400">Giới tính</span>
               </div>
             </div>
             {/* CARD */}
@@ -119,7 +135,7 @@ const SingleTeacherPage = async ({
                 className="w-6 h-6"
               />
               <div className="">
-                <h1 className="text-xl font-semibold">6</h1>
+                <h1 className="text-xl font-semibold"></h1>
                 <span className="text-sm text-gray-400">Classes</span>
               </div>
             </div>
@@ -127,7 +143,7 @@ const SingleTeacherPage = async ({
         </div>
         {/* BOTTOM */}
         <div className="mt-4 bg-white rounded-md p-4 h-[800px]">
-          <BigCalendar teacherId={id}/>
+          <CalendarAdmin userId={id}/>
         </div>
       </div>
       {/* RIGHT */}
@@ -154,7 +170,7 @@ const SingleTeacherPage = async ({
         </div>
         <Performance />
       </div> */}
-    </div>
+    </div>}</>
   );
 };
 

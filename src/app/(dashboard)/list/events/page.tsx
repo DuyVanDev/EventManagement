@@ -5,18 +5,16 @@ import {
   EV_spEvent_Delete,
   fetchEventList,
 } from "@/app/action/event";
-import { EV_spFaculty_Delete } from "@/app/action/faculty";
 import { sendNotification } from "@/app/action/sendnotify";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { eventsData, role } from "@/lib/data";
+import { role } from "@/lib/data";
 import { Alertsuccess, Alertwarning } from "@/utils";
 import { FormatDateJsonPro } from "@/utils/FormatDateJson";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import useSWR from "swr";
 import StudentList from "./studentlist";
 
@@ -52,9 +50,15 @@ const ConfirmModal = ({
         <p className="text-gray-600 mt-4">
           Bạn có chắc
           {event?.IsRegistrationOpen == 0 ? (
-            <span className="text-red-500 font-semibold"> đóng cập nhật minh chứng </span>
+            <span className="text-red-500 font-semibold">
+              {" "}
+              đóng cập nhật minh chứng{" "}
+            </span>
           ) : (
-            <span className="text-sky-500 font-semibold"> mở cập nhật minh chứng </span>
+            <span className="text-sky-500 font-semibold">
+              {" "}
+              mở cập nhật minh chứng{" "}
+            </span>
           )}
           sự kiện {event?.EventName}?
         </p>
@@ -113,7 +117,7 @@ const columns = [
   {
     header: "SV đăng ký",
     accessor: "StudentCount",
-    className: "hidden md:table-cell",
+    className: "hidden md:table-cell text-center",
   },
   {
     header: "Thông báo",
@@ -121,9 +125,9 @@ const columns = [
     className: "hidden md:table-cell",
   },
   {
-    header: "Trạng thái",
+    header: "Mở minh chứng",
     accessor: "Status",
-    className: "hidden md:table-cell",
+    className: "hidden md:table-cell text-center",
   },
   {
     header: "",
@@ -220,7 +224,7 @@ const EventListPage = () => {
     ? EventListTmp?.slice(startIndex, startIndex + itemsPerPage)
     : [];
 
-  const renderRow = (item: Event) => {
+  const renderRow = (item: any) => {
     return (
       <tr
         key={item.EventId}
@@ -235,7 +239,7 @@ const EventListPage = () => {
           {FormatDateJsonPro(item.EndTime, 5)}
         </td>
         <td>{item.LocationName}</td>
-        <td>
+        <td className="flex items-center justify-center">
           <button
             className={`w-8 h-8 flex items-center justify-center rounded-full bg-lamaSky`}
             onClick={() => handleShowListStudent(item.EventId)}
@@ -352,7 +356,8 @@ const EventListPage = () => {
                   ParticipantLimit: 0,
                   Thumnail: "",
                   ListImage: null,
-                  Point : 0
+                  Point: 0,
+                  FacultyId: 0,
                 }}
                 onActionComplete={() => mutate()}
               />
@@ -384,7 +389,6 @@ const NotificationModal = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const convertToArray = (pr: string) => {
-    console.log(pr);
     const convertedArray = pr?.split(";").map(Number); // Tách chuỗi và chuyển thành mảng số
     return convertedArray;
   };

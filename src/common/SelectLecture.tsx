@@ -68,7 +68,7 @@ const SelectLectureComp = React.forwardRef<HTMLDivElement, SelectLectureProps>(
         const list = await fetchLectureSelect({ Id });
         const dataOptions = list.map((lecture: any) => ({
           value: lecture.UserId,
-          label: lecture.FullName,
+          label: lecture.FullName + " - "+ lecture.FacultyName,
         }));
 
         setData([defaultOption, ...dataOptions]);

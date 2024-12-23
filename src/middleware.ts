@@ -48,5 +48,6 @@ export const config = {
     "/list/(.*)", 
     "/sign-in", 
     "/myevent(.*)",
+    "/training-point(.*)",
   ],
 };

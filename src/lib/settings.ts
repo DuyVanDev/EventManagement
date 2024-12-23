@@ -19,6 +19,6 @@ type RouteAccessMap = {
     "/list/events": ["admin", "teacher", "student"],
     "/list/announcements": ["admin", "teacher", "student"],
     "/myevent": ["student"],
-    "/training-point": ["student"],
+    "/trainingpoint": ["student"],
     "/profile": ["student","teacher"],
   };

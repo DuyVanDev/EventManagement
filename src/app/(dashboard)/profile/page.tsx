@@ -45,7 +45,7 @@ const Profile = () => {
       FullName: user?.FullName,
       PhoneNumber: user?.PhoneNumber,
       Address: user?.Address,
-      BirthDay: user?.BirthDay,
+      BirthDay: FormatDateJsonPro( user?.BirthDay,16),
       Specialty: user?.Specialty,
       Email: user?.Email,
       Sex: user?.Sex,
@@ -142,7 +142,10 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex justify-center items-center mt-8 ">
+    <div
+      className="flex justify-center items-center pt-4 h-screen bg-cover bg-center"
+      style={{ backgroundImage: "url('/bg-login.jfif')" }}
+    >
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl border border-gray-200">
         <h2 className="text-2xl font-bold mb-6 text-center">Cá nhân</h2>
         <div className="flex border-b mb-6">
@@ -240,7 +243,7 @@ const Profile = () => {
                 control={control}
                 render={({ field }) => (
                   <InputField
-                    label="PhoneNumber"
+                    label="Số điện thoại"
                     name="PhoneNumber"
                     defaultValue={field.value}
                     register={register}
@@ -270,10 +273,10 @@ const Profile = () => {
                 control={control}
                 render={({ field }) => (
                   <InputField
-                    label="BirthDay"
+                    label="Ngày sinh"
                     type="date"
                     name="BirthDay"
-                    defaultValue={FormatDateJsonPro(field.value, 16)}
+                    defaultValue={'2024-01-01'}
                     register={register}
                     error={errors?.BirthDay}
                   />

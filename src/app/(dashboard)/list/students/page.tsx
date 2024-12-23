@@ -23,7 +23,7 @@ type Student = {
 };
 const columns = [
   {
-    header: "Avatar",
+    header: "Ảnh đại diện",
     accessor: "info",
   },
   {

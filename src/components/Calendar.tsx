@@ -2,50 +2,69 @@
 import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "moment/locale/vi";
-import { Alertsuccess, Alertwarning, FormatDateJsonPro } from "@/utils";
+import { FormatDateJsonPro } from "@/utils";
 import Image from "next/image";
-import { EV_spEventStudent_Register } from "@/app/action/event";
-import { useAuth } from "@/context/AuthContext";
+import { fetchEventByTeacher } from "@/app/action/event";
+import useSWR from "swr";
+
 moment.locale("vi");
 const localizer = momentLocalizer(moment);
 
-const CalendarStudent = ({ Data,mutate }: { Data: any,mutate : any }) => {
+const fetcherEventByTeacher = (params: object) => fetchEventByTeacher(params);
+
+
+const transformApiData = (event) => {
+    const [startDate, startTime] = event.StartTime.split(" ");
+    const [startDay, startMonth, startYear] = startDate.split("/");
+    const [startHour, startMinute] = startTime.split(":");
+  
+    const [endDate, endTime] = event.EndTime.split(" ");
+    const [endDay, endMonth, endYear] = endDate.split("/");
+    const [endHour, endMinute] = endTime.split(":");
+  
+    return {
+      title: event.EventName,
+      allDay: false, // Hoặc true nếu sự kiện diễn ra cả ngày
+      start: new Date(
+        parseInt(startYear),
+        parseInt(startMonth) - 1,
+        parseInt(startDay),
+        parseInt(startHour),
+        parseInt(startMinute)
+      ),
+      end: new Date(
+        parseInt(endYear),
+        parseInt(endMonth) - 1,
+        parseInt(endDay),
+        parseInt(endHour),
+        parseInt(endMinute)
+      ),
+      locationName: event.LocationName,
+      studentJoin: event.StudentCount,
+    };
+  };
+
+const CalendarAdmin = ({ userId }: { userId: any }) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date()); // Ngày hiện tại
-  const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [view, setView] = useState<View>(Views.WEEK);
-
   const handleSelectEvent = (event) => {
-    console.log("Thông tin sự kiện:", event); // Kiểm tra object đầy đủ
     setSelectedEvent(event);
   };
+  const [Data, setData] = useState([]);
+  const { data: ListData } = useSWR(
+    { UserId: userId },
+    fetcherEventByTeacher
+  );
+  console.log(ListData)
 
-  const handleCancelEvent = async (item) => {
-    setIsLoading(true);
-    try {
-      const pr = {
-        EventId: item?.eventId,
-        StudentId: user?.UserId,
-        AttendanceStatus : 1
-      };
-      const res = await EV_spEventStudent_Register(pr);
-      if (res?.Status == "OK") {
-        Alertsuccess(res?.ReturnMess);
-        setSelectedEvent(null);
-        setIsLoading(false);
-        mutate()
-      } else {
-        Alertwarning(res?.ReturnMess);
-        setIsLoading(false);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  console.log(selectedEvent)
+   useEffect(() => {
+      const transformedEvents =
+        ListData?.map(transformApiData);
+      setData(transformedEvents);
+    }, [ListData]);
 
   return (
     <>
@@ -60,15 +79,14 @@ const CalendarStudent = ({ Data,mutate }: { Data: any,mutate : any }) => {
         defaultView={view}
         onSelectEvent={handleSelectEvent}
         view={view}
-        onView={(newView) => {
-          console.log(newView);
-          setView(newView);
+        onView={(newView) =>{
+          setView(newView)
         }}
         components={{
           toolbar: CustomToolbar,
           week: {
-            header: ({ date, localizer }) => localizer.format(date, "dddd"),
-          },
+            header: ({ date, localizer }) => localizer.format(date, 'dddd')
+          }
         }}
         style={{ height: "80vh" }}
       />
@@ -130,40 +148,6 @@ const CalendarStudent = ({ Data,mutate }: { Data: any,mutate : any }) => {
                   <span className="ml-2">{selectedEvent.studentJoin}</span>
                 </div>
               </div>
-
-              <button
-                className={`self-end bg-red-700 text-white py-2 px-4 rounded-md border-none w-max text-sm ${
-                  isLoading ? "cursor-not-allowed opacity-75" : ""
-                }`}
-                type="submit"
-                onClick={() => handleCancelEvent(selectedEvent)}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    ></path>
-                  </svg>
-                ) : (
-                  "Hủy đăng ký"
-                )}
-              </button>
             </div>
           </div>
         </div>
@@ -217,4 +201,4 @@ const CustomToolbar = ({ label, onNavigate, onView }: any) => {
   );
 };
 
-export default CalendarStudent;
+export default CalendarAdmin;

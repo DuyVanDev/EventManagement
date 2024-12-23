@@ -3,13 +3,15 @@ import useSWR from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { EV_spEventType_List, fetchEventType } from "@/app/action/event";
-const fetcherEventType = (params: object) => EV_spEventType_List(params);
+import { fetchFacultyList } from "@/app/action/faculty";
+const fetcherFacuty = (params: object) => fetchFacultyList(params);
 
 const Sidebar = () => {
   const [selectedSorts, setSelectedSorts] = useState([]);
   const router = useRouter();
   const searchParams = useSearchParams(); // Get the current search params from the URL
-  const { data: DataEvent, mutate } = useSWR({ Id: 0 }, fetcherEventType);
+  const { data: DataEvent, mutate } = useSWR({ FacultyId: 0 }, fetcherFacuty);
+  console.log(DataEvent);
 
   useEffect(() => {
     // On page load, initialize the selectedSorts from the query param
@@ -19,6 +21,7 @@ const Sidebar = () => {
 
   const handleFilterChange = (event) => {
     const value = event.target.value;
+    console.log(value)
     let updatedSorts;
 
     if (selectedSorts.includes(value)) {
@@ -41,23 +44,23 @@ const Sidebar = () => {
   return (
     <div className="px-4 h-max sticky top-8 shadow-xl md:w-1/3 py-4 w-full bg-white">
       <h1 className="mt-2 mb-4 text-sm font-medium">Các loại sự kiện</h1>
-      <div className="flex flex-col gap-3 text-sm">
+      <div className="flex flex-col gap-6 text-sm">
         {Array.isArray(DataEvent) &&
           DataEvent?.map((item) => (
             <label
-            key={item?.Id}
+              key={item?.FacultyId}
               htmlFor=""
               className="flex items-center gap-2 cursor-pointer"
             >
               <input
                 type="checkbox"
                 name="eventtype"
-                value={`${item?.Id}`}
-                checked={selectedSorts.includes(`${item?.Id}`)}
+                value={`${item?.FacultyId}`}
+                checked={selectedSorts.includes(`${item?.FacultyId}`)}
                 onChange={handleFilterChange}
                 className="appearance-none w-4 h-4 border-[1.5px] border-blue-800 cursor-pointer rounded-sm bg-white checked:bg-blue-800"
               />
-              {item?.EventTypeName}
+              {item?.FacultyName}
             </label>
           ))}
       </div>

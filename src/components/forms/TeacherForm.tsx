@@ -22,9 +22,9 @@ const schema = z.object({
   FullName: z.string().min(1, { message: "First name is required!" }),
   PhoneNumber: z.string().min(1, { message: "Phone is required!" }),
   Address: z.string().min(1, { message: "Address is required!" }),
-  BirthDay: z.string({ message: "Birthday is required!" }),
+  BirthDay: z.string({ message: "BirthDay is required!" }),
   Specialty: z.any(),
-  // Avatar: z.instanceof(File, { message: "Image is required" }),
+  Avatar: z.any(),
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -32,9 +32,13 @@ type Inputs = z.infer<typeof schema>;
 const TeacherForm = ({
   type,
   data,
+  setOpen,
+  onActionComplete,
 }: {
   type: "create" | "update";
   data?: any;
+  setOpen? : any,
+  onActionComplete: any,
 }) => {
   const {
     register,
@@ -56,7 +60,8 @@ const TeacherForm = ({
       Email: data.Email,
     },
   });
-  console.log(data.Email)
+  const [isLoading, setIsLoading] = useState(false);
+  console.log(FormatDateJsonPro(data.BirthDay, 16));
 
   const [uploadedImages, setUploadedImages] = useState([]);
   const [imageData, setImageData] = useState(data?.Avatar); // Dữ liệu ảnh dạng string từ server hoặc xử lý khác
@@ -77,7 +82,7 @@ const TeacherForm = ({
       setValue("FullName", data.FullName);
       setValue("PhoneNumber", data.PhoneNumber);
       setValue("Address", data.Address);
-      setValue("BirthDay", data.BirthDay);
+      setValue("BirthDay", FormatDateJsonPro(data.BirthDay,16));
       setValue("Specialty", data.Specialty);
       setValue("Avatar", data.Avatar);
       setValue("Email", data.Email);
@@ -85,6 +90,9 @@ const TeacherForm = ({
   }, [data, setValue]);
 
   const onSubmit = handleSubmit(async (dataform) => {
+    debugger;
+    setIsLoading(true);
+
     try {
       let _newListImage = "";
       if (uploadedImages.length > 0 && Array.isArray(uploadedImages)) {
@@ -96,9 +104,7 @@ const TeacherForm = ({
         ) {
           listimage = await CallUploadImage(uploadedImages);
         }
-        _newListImage = [listimage]
-          .filter((p) => p !== "" && p !== undefined && p !== "undefined")
-          .join(";");
+        _newListImage = listimage[0]?.url;
       } else if (
         typeof uploadedImages === "string" ||
         uploadedImages.length === 0
@@ -106,6 +112,8 @@ const TeacherForm = ({
         _newListImage = data?.Avatar;
       } else if (!_newListImage) {
         Alerterror("File error");
+        setIsLoading(false);
+
         return;
       }
       const pr = {
@@ -134,37 +142,41 @@ const TeacherForm = ({
         setUploadedImages([]);
         setIsReset(Math.random());
         Alertsuccess(result?.ReturnMess);
+        setOpen(false);
+        onActionComplete();
+        setIsLoading(false);
       } else {
         Alerterror(result?.ReturnMess);
+        setIsLoading(false);
       }
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
     }
   });
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">Sửa thông tin giảng viên</h1>
+      <h1 className="text-xl font-semibold">
+        {" "}
+        {type === "create" ? "Thêm giảng viên" : "Sửa thông tin"}
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 flex-wrap gap-4">
-       
         <InputField
           label="Email"
           name="Email"
-          defaultValue={data?.Email}
           register={register}
           error={errors?.Email}
         />
         <InputField
           label="Họ và tên"
           name="FullName"
-          defaultValue={data?.FullName}
           register={register}
           error={errors.FullName}
         />
         <InputField
           label="Số điện thoại"
           name="PhoneNumber"
-          defaultValue={data?.PhoneNumber}
           register={register}
           error={errors.PhoneNumber}
         />
@@ -176,13 +188,11 @@ const TeacherForm = ({
           error={errors.Address}
         />
         <InputField
-          label="Birthday"
-          name="Birthday"
-          defaultValue={FormatDateJsonPro(data.BirthDay, 22)}
-          register={register}
-          error={errors.Birthday}
-          required={true}
+          label="BirthDay"
           type="date"
+          name="BirthDay"
+          register={register}
+          error={errors?.BirthDay}
         />
         <div>
           <Controller
@@ -216,24 +226,41 @@ const TeacherForm = ({
             readOnly={false} // Cho phép người dùng upload ảnh
           />
         </div>
-
-        {/* <label
-            className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
-            htmlFor="img"
-          >
-            <Image src="/upload.png" alt="" width={28} height={28} />
-            <span>Upload a photo</span>
-          </label>
-          <input type="file" id="img" {...register("img")} className="hidden" />
-          {errors.img?.message && (
-            <p className="text-xs text-red-400">
-              {errors.img.message.toString()}
-            </p>
-          )} */}
       </div>
 
-      <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Tạo" : "Sửa"}
+      <button
+        className={`bg-sky-600 text-white px-4 py-2 rounded flex items-center justify-center gap-2 ${
+          isLoading ? "cursor-not-allowed opacity-75" : ""
+        }`}
+        type="submit"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <svg
+            className="animate-spin h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v8H4z"
+            ></path>
+          </svg>
+        ) : type === "create" ? (
+          "Tạo"
+        ) : (
+          "Sửa"
+        )}
       </button>
     </form>
   );

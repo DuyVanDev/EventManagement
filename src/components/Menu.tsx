@@ -59,8 +59,8 @@ const Menu = () => {
         },
         {
           icon: "/exam.png",
-          label: "training-point",
-          href: "/myevent",
+          label: "Điểm rèn luyện",
+          href: "/training-point",
           visible: ["student"],
         },
       ],
@@ -81,7 +81,7 @@ const Menu = () => {
                   key={item.label}
                   className="flex items-center justify-center lg:justify-start gap-4 text-white py-2 md:px-2 rounded-md hover:bg-lamaSkyLight hover:text-black"
                 >
-                  <Image src={item.icon} alt="" width={20} height={20} />
+                  <Image src={item.icon} alt="" width={20} height={20} className="bg-white rounded-md p-1 " />
                   <span className="hidden lg:block">{item.label}</span>
                 </Link>
               );

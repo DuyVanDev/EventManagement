@@ -8,7 +8,7 @@ const EventListTeacher = ({ data }: { data: any }) => {
       {Array.isArray(data) &&
         data?.map((item, index) => {
           return (
-            <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-col gap-4 mt-4" key={index}>
               <div className="bg-lamaSkyLight rounded-md p-4">
                 <div className="flex items-center justify-between">
                   <h2 className="font-medium">{item?.EventName}</h2>

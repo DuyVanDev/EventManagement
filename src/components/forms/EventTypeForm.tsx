@@ -27,6 +27,8 @@ const EventTypeForm = ({
 }: {
   type: "create" | "update";
   data?: any;
+  setOpen? : any,
+  onActionComplete: any,
 }) => {
   const {
     register,
@@ -75,7 +77,11 @@ const EventTypeForm = ({
 
   return (
     <form className="flex flex-col gap-2" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">Thêm mới loại sự kiện</h1>
+      <h1 className="text-xl font-semibold">{type === "create" ? (
+          "Thêm mới"
+        ) : (
+          "Sửa"
+        )}</h1>
 
       <div className="grid grid-cols-1 gap-4">
         <InputField

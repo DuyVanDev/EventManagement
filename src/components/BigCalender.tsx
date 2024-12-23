@@ -123,7 +123,7 @@ const CustomToolbar = ({ label, onNavigate, onView }: any) => {
           className="bg-blue-500 text-white px-3 py-1 rounded"
           onClick={() => onNavigate("NEXT")}
         >
-          Tiếp
+          Sau
         </button>
       </div>
 

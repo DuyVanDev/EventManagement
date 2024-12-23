@@ -53,6 +53,7 @@ interface EventList {
   EventTypeId? : number;
   UserId? :number;
   EventTypeIds?:any;
+  FacultyIds?:any;
 }
 
 export const fetchEventList = async (data: EventList) => {
@@ -166,5 +167,17 @@ interface EV_spEventStudent_Save {
 export const EV_spEventStudent_Save = async (data: EV_spEventStudent_Save) => {
   try {
     return await fetchMethod(data, "EV_spEventStudent_Save");
+  } catch (error) {}
+};
+
+interface EV_spEventListByStudent_Get {
+  UserId: number;
+  Month : any;
+  Year : any;
+}
+
+export const EV_spEventListByStudent_Get = async (data: EV_spEventListByStudent_Get) => {
+  try {
+    return await fetchMethod(data, "EV_spEventListByStudent_Get");
   } catch (error) {}
 };

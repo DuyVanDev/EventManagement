@@ -50,13 +50,11 @@ const fetcherRegisted = (params: object) =>
 
 const StudentPage = () => {
   const { user } = useAuth();
-  const [viewMode, setViewMode] = useState("calendar");
 
   const { data: ListDataRegisted, mutate } = useSWR(
     { UserId: user?.UserId },
     fetcherRegisted
   );
-  console.log(ListDataRegisted);
   const [LstData, setLstData] = useState([]);
 
   const [isModalViewOpen, setIsModalViewOpen] = useState(false);

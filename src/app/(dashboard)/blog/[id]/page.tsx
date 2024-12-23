@@ -17,6 +17,7 @@ const BlogDetail = ({ params }: { params: { id: number } }) => {
     { EventId: id, UserId: user?.UserId },
     fetcher
   );
+  console.log(id)
 
   // Handle event registration
   const handleRegisterEvent = async (item) => {
@@ -49,14 +50,17 @@ const BlogDetail = ({ params }: { params: { id: number } }) => {
           <span className="text-sky-500 font-semibold">Đăng bởi: {Event[0]?.CreaterName}</span>
           <span className="mx-2">|</span>
           <span>Ngày bắt đầu: {FormatDateJsonPro(Event[0]?.StartTime, 7)}</span>
-          {!Event[0]?.IsRegister && Event[0]?.IsRegister !== 0 && (
-            <button
+          {
+              (Event[0]?.IsRegister == 1 || Event[0]?.IsRegister == null) &&
+              user?.RoleTmp == "student" && (
+                <button
               onClick={() => handleRegisterEvent(Event[0])}
               className="ml-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               Đăng ký
             </button>
-          )}
+              )}
+         
         </div>
         <div
           className="prose prose-lg max-w-none mb-8 text-gray-700"

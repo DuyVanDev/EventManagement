@@ -21,7 +21,7 @@ const StudentPage = () => {
 
   // Fetch data từ server với eventTypes
   const { data: ListData, mutate } = useSWR(
-    { EventId: 0, UserId: user?.UserId, EventTypeId: eventTypes.join(",") },
+    { EventId: 0, UserId: user?.UserId, FacultyId: eventTypes.join(",") },
     fetcher
   );
 

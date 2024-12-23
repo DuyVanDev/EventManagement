@@ -28,7 +28,7 @@ const columns = [
 const fetcher = (params: object) => fetchFacultyList(params);
 
 const FacultyListPage = () => {
-  const { data: ListData, mutate } = useSWR({ FacultyId: "0" }, fetcher);
+  const { data: ListData, mutate } = useSWR({ FacultyId: 0 }, fetcher);
 
   const [facultyTmp, seTfacultyTmp] = useState(ListData);
   const [currentPage, setCurrentPage] = useState(1);

@@ -33,6 +33,8 @@ const StudentForm = ({
 }: {
   type: "create" | "update";
   data?: any;
+  setOpen? : any,
+  onActionComplete: any,
 }) => {
   const {
     register,

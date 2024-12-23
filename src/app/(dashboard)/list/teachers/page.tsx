@@ -25,7 +25,7 @@ type Teacher = {
 const fetcher = (params: object) => fetchTeacher(params);
 const columns = [
   {
-    header: "Avatar",
+    header: "Ảnh đại diện",
     accessor: "info",
   },
   {
@@ -174,6 +174,7 @@ const TeacherListPage = () => {
                   BirthDay: new Date(),
                   Avatar: "",
                 }}
+                onActionComplete={() => mutate()}
               />
             )}
           </div>
