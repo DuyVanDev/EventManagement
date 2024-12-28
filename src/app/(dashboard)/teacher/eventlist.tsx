@@ -1,5 +1,4 @@
 const EventListTeacher = ({ data }: { data: any }) => {
-  console.log(data);
   return (
     <div className="bg-white p-4 rounded-md">
       <div className="flex items-center justify-between">

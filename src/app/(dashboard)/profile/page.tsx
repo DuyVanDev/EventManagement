@@ -45,7 +45,7 @@ const Profile = () => {
       FullName: user?.FullName,
       PhoneNumber: user?.PhoneNumber,
       Address: user?.Address,
-      BirthDay: FormatDateJsonPro( user?.BirthDay,16),
+      BirthDay: FormatDateJsonPro(user?.BirthDay, 16),
       Specialty: user?.Specialty,
       Email: user?.Email,
       Sex: user?.Sex,
@@ -120,11 +120,11 @@ const Profile = () => {
         Avatar: _newThumnail,
       };
       const result = await EV_spUser_Save(pr);
-      console.log(result);
       if (result?.Status == "OK") {
         localStorage.setItem("userEvent", JSON.stringify(result?.user));
 
         Alertsuccess(result?.ReturnMess);
+        login(user?.UserName, user?.Password, 1);
         setLoading(false);
       } else {
         Alerterror(result?.ReturnMess);
@@ -276,7 +276,7 @@ const Profile = () => {
                     label="Ngày sinh"
                     type="date"
                     name="BirthDay"
-                    defaultValue={'2024-01-01'}
+                    defaultValue={"2024-01-01"}
                     register={register}
                     error={errors?.BirthDay}
                   />

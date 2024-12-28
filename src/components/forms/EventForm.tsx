@@ -84,7 +84,6 @@ const EventForm = ({
     },
   });
 
-  console.log(data);
   const [isLoading, setIsLoading] = useState(false);
   //#region  thumnail
   const [imagesThumnail, setImagesThumnail] = useState(data?.Thumnail);
@@ -111,17 +110,16 @@ const EventForm = ({
     setUploadedListImage(files);
   };
   const combinedImages = [...images, ...uploadedListImage];
-  console.log(data);
   // #endregion
   useEffect(() => {
     if (data) {
-      setValue("EventName", data.EventName);
-      setValue("EventDescription", data.EventDescription);
-      setValue("ParticipantLimit", data.ParticipantLimit.toString());
-      setValue("Time", [data.StartTime, data.EndTime]);
-      setValue("Thumnail", data.Thumnail);
+      setValue("EventName", data?.EventName);
+      setValue("EventDescription", data?.EventDescription);
+      setValue("ParticipantLimit", data?.ParticipantLimit?.toString());
+      setValue("Time", [data?.StartTime, data?.EndTime]);
+      setValue("Thumnail", data?.Thumnail);
       setValue("ListImage", data?.ListImage?.split(";").filter(Boolean) || []);
-      setValue("Point", data?.Point.toString());
+      setValue("Point", data?.Point?.toString());
       setValue("FacultyId", data?.FacultyId || 0);
     }
   }, [data, setValue]);

@@ -119,7 +119,7 @@ const StudentList = ({
         Alertsuccess(result.ReturnMess);
         closeModalView();
         setIsLoading(false);
-        mutate()
+        mutate();
       } else {
         Alertwarning(result.ReturnMess);
         setIsLoading(false);
@@ -143,17 +143,21 @@ const StudentList = ({
 
         <td>{item.PhoneNumber}</td>
         <td className="flex items-center justify-center">
-          <Image
-            className="cursor-pointer"
-            onClick={() => {
-              openModalView();
-              setDataProof(item);
-            }}
-            src={item?.ProofImage}
-            width={40}
-            height={40}
-            alt="Minh chứng"
-          />
+          {!item?.ProofImage || item?.ProofImage == "" ? (
+            <p className="text-red-500">Chưa có</p>
+          ) : (
+            <Image
+              className="cursor-pointer"
+              onClick={() => {
+                openModalView();
+                setDataProof(item);
+              }}
+              src={item?.ProofImage}
+              width={40}
+              height={40}
+              alt="Minh chứng"
+            />
+          )}
         </td>
         <td className="hidden md:table-cell">
           {FormatDateJsonPro(item.CreateAt, 10)}
@@ -240,14 +244,19 @@ const StudentList = ({
           <div className="bg-white rounded-lg shadow-lg p-6 w-[600px]">
             <h2 className="text-lg font-bold mb-4">
               Minh Chứng - {dataProof.FullName}
+              {console.log(dataProof?.ProofImage)}
             </h2>
             <div className="flex items-center justify-center p2">
-              <Image
-                src={dataProof.ProofImage}
-                width={500}
-                height={500}
-                alt="Hình ảnh minh chứng"
-              />
+              {!dataProof?.ProofImage || dataProof?.ProofImage == "" ? (
+                <p>Chưa cập nhật</p>
+              ) : (
+                <Image
+                  src={dataProof.ProofImage}
+                  width={500}
+                  height={500}
+                  alt="Hình ảnh minh chứng"
+                />
+              )}
             </div>
             <div className="flex justify-end mt-4">
               <button

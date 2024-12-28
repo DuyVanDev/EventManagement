@@ -70,7 +70,7 @@ const Navbar = () => {
             alt="avatar"
             width={40}
             height={40}
-            className="rounded-full cursor-pointer object-cover"
+            className="rounded-full cursor-pointer object-cover w-[40px] h-[40px] overflow-hidden"
             onClick={toggleDropdown} // Khi click vào avatar, đổi trạng thái dropdown
           />
 

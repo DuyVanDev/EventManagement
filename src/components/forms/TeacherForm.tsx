@@ -61,7 +61,6 @@ const TeacherForm = ({
     },
   });
   const [isLoading, setIsLoading] = useState(false);
-  console.log(FormatDateJsonPro(data.BirthDay, 16));
 
   const [uploadedImages, setUploadedImages] = useState([]);
   const [imageData, setImageData] = useState(data?.Avatar); // Dữ liệu ảnh dạng string từ server hoặc xử lý khác

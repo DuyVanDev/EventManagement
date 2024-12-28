@@ -11,7 +11,6 @@ const Sidebar = () => {
   const router = useRouter();
   const searchParams = useSearchParams(); // Get the current search params from the URL
   const { data: DataEvent, mutate } = useSWR({ FacultyId: 0 }, fetcherFacuty);
-  console.log(DataEvent);
 
   useEffect(() => {
     // On page load, initialize the selectedSorts from the query param
@@ -21,7 +20,6 @@ const Sidebar = () => {
 
   const handleFilterChange = (event) => {
     const value = event.target.value;
-    console.log(value)
     let updatedSorts;
 
     if (selectedSorts.includes(value)) {

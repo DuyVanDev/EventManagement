@@ -40,7 +40,7 @@ const StudentPage = () => {
             <p className="font-semibold text-xl">Danh sách sự kiện</p>
             <div className="pt-4 space-y-2 ">
               {ListData?.map((article, index) => (
-                <BlogItem post={article} key={index} />
+                <BlogItem post={article} key={index} onMutate={mutate}/>
               ))}
             </div>
           </div>

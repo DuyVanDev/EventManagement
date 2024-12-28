@@ -10,9 +10,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
-const BlogItem = ({ post }) => {
+const BlogItem = ({ post, onMutate }) => {
   const { user } = useAuth();
-  console.log(post);
 
   const handleRegisterEvent = async (item) => {
     try {
@@ -24,6 +23,7 @@ const BlogItem = ({ post }) => {
       const res = await EV_spEventStudent_Register(pr);
       if (res?.Status == "OK") {
         Alertsuccess(res?.ReturnMess);
+        onMutate()
       } else {
         Alertwarning(res?.ReturnMess);
       }

@@ -58,7 +58,6 @@ const CalendarAdmin = ({ userId }: { userId: any }) => {
     { UserId: userId },
     fetcherEventByTeacher
   );
-  console.log(ListData)
 
    useEffect(() => {
       const transformedEvents =

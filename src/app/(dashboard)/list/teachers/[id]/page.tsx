@@ -21,8 +21,6 @@ const SingleTeacherPage =  ({
   const { id } = params;
   const { data: teacher, mutate,isLoading } = useSWR({ Id: id }, fetcherTeacher);
   const { data: events } = useSWR({ UserId: id }, fetcherEvents);
-  console.log(teacher)
-
   return (
     <>
     {teacher && <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
@@ -135,8 +133,8 @@ const SingleTeacherPage =  ({
                 className="w-6 h-6"
               />
               <div className="">
-                <h1 className="text-xl font-semibold"></h1>
-                <span className="text-sm text-gray-400">Classes</span>
+                <h1 className="text-xl font-semibold">{FormatDateJsonPro(teacher[0]?.BirthDay,7)}</h1>
+                <span className="text-sm text-gray-400">Ngày sinh</span>
               </div>
             </div>
           </div>

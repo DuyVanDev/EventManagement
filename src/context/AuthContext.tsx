@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [router]);
   // Login function
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, password: string, type: any) => {
     try {
       // Call API and get user data
       const response = await EV_spEvent_Login({
@@ -90,11 +90,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(response.result[0]);
         localStorage.setItem("userEvent", JSON.stringify(response.result[0]));
         document.cookie = `role=${response.result[0]?.RoleTmp}; path=/; max-age=86400;`;
-        Alertsuccess("Đăng nhập thành công");
-        setTimeout(() => {
-          window.location.href = `/${response.result[0]?.RoleTmp}`;
-        }, 2000);
-
+        if (type != 1) {
+          Alertsuccess("Đăng nhập thành công");
+          setTimeout(() => {
+            window.location.href = `/${response.result[0]?.RoleTmp}`;
+          }, 2000);
+        }
       } else {
         Alertwarning(response?.result);
       }

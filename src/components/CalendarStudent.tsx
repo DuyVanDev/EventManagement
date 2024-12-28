@@ -19,7 +19,6 @@ const CalendarStudent = ({ Data,mutate }: { Data: any,mutate : any }) => {
   const [view, setView] = useState<View>(Views.WEEK);
 
   const handleSelectEvent = (event) => {
-    console.log("Thông tin sự kiện:", event); // Kiểm tra object đầy đủ
     setSelectedEvent(event);
   };
 
@@ -45,7 +44,6 @@ const CalendarStudent = ({ Data,mutate }: { Data: any,mutate : any }) => {
       console.log(err);
     }
   };
-  console.log(selectedEvent)
 
   return (
     <>
@@ -61,7 +59,6 @@ const CalendarStudent = ({ Data,mutate }: { Data: any,mutate : any }) => {
         onSelectEvent={handleSelectEvent}
         view={view}
         onView={(newView) => {
-          console.log(newView);
           setView(newView);
         }}
         components={{

@@ -144,6 +144,8 @@ const StudentPage = () => {
     }
   };
 
+console.log(dataProof?.ProofImage)
+
   return (
     <div className="h-full">
       <div className="container mx-auto p-4 h-full">
@@ -212,6 +214,7 @@ const StudentPage = () => {
                           }}
                         />
                         <p className="mt-3 text-right">
+                          {console.log(item?.ProofImage)}
                           {item?.IsRegistrationOpen == 0 &&
                             (!item?.ProofImage || item?.ProofImage == "") && (
                               <p
@@ -226,7 +229,7 @@ const StudentPage = () => {
                               </p>
                             )}
 
-                          {(item?.ProofImage || item?.ProofImage != "") && (
+                          {(item?.ProofImage && item?.ProofImage != "" && item?.ProofImage != undefined ) && (
                             <p
                               onClick={() => {
                                 openModalView();

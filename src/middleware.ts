@@ -5,7 +5,6 @@ import { routeAccessMap } from "./lib/settings";
 // Hàm lấy thông tin role từ cookie hoặc session
 function getUserRole(req: NextRequest): string | null {
   const role = req.cookies.get("role")?.value; // Lấy role từ cookie
-  console.log("User role:", role); // Thêm console.log để kiểm tra role
   return role ?? null; // Trả về null nếu không có giá trị
 }
 

@@ -46,15 +46,13 @@ const TrainingPoint = () => {
     setSelectedYear(year);
   };
 
-  console.log(ListData);
-
   return (
     <div className="flex flex-col items-center gap-6 p-4">
       {/* Dropdown for Year */}
       <div className="w-full flex items-center justify-between"></div>
 
       {/* Horizontal Tabs for Months */}
-      <div className="w-full flex">
+      <div className="w-full flex gap-2">
         <select
           value={selectedYear}
           onChange={(e) => setSelectedYear(Number(e.target.value))}
@@ -71,7 +69,7 @@ const TrainingPoint = () => {
             <button
               key={month.value}
               onClick={() => setSelectedMonth(month.value)}
-              className={`flex-shrink-0 px-4 py-2 rounded-md text-sm font-medium transition ${
+              className={`flex-shrink-0 px-4 py-2 rounded-md text-sm font-medium transition shadow-md ${
                 selectedMonth === month.value
                   ? "bg-blue-500 text-white"
                   : "bg-gray-100 hover:bg-gray-200 text-gray-700"
@@ -88,7 +86,9 @@ const TrainingPoint = () => {
         {ListData?.length > 0 ? (
           ListData?.map((item) => <EventCard event={item} key={item.EventId} />)
         ) : (
-          <div className="flex items-center justify-center h-full w-full col-span-full text-base font-semibold">Không có dữ liệu</div>
+          <div className="flex items-center justify-center h-full w-full col-span-full text-base font-semibold">
+            Không có dữ liệu
+          </div>
         )}
       </div>
     </div>
@@ -106,12 +106,14 @@ const EventCard = ({ event }) => {
   };
 
   return (
-    <div className="rounded overflow-hidden shadow-lg bg-white hover:shadow-xl transition duration-300">
+    <div className=" rounded overflow-hidden shadow-lg bg-white hover:shadow-xl transition duration-300">
       {/* Event Image */}
-      <img
-        className="w-full h-48 object-cover"
+      <Image
         src={event.Thumnail}
         alt={event.EventName}
+        width={500}
+        className="max-h-[250px]"
+        height={500}
       />
       {/* Event Content */}
       <div className="p-4">
